@@ -2,7 +2,10 @@ from flask import render_template, request, flash, redirect
 from musicdb import app
 from app import db
 from app.models import Artist,Recording,Song
-from app.forms import MusicSearchForm
+from app.forms import MusicSearchForm,AlbumForm,ArtistForm
+from datetime import datetime
+from sqlalchemy.exc import SQLAlchemyError
+import time
 
 @app.route('/',methods=['GET', 'POST'])
 @app.route('/index',methods=['GET', 'POST'])
@@ -82,3 +85,79 @@ def show_recording():
 @app.route('/show-song')
 def show_song():
    return render_template('show-songs.html', songs = Song.query.all() )
+
+@app.route('/new_album', methods=['GET', 'POST'])
+def new_album():
+    """
+    Add a new album
+    """
+    form = AlbumForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+        # save the album
+        recording = Recording()
+
+        save_changes(recording, form, new=True)
+        flash("Entering Album"+form.album_name.data)
+        return redirect('/')
+
+
+    return render_template('new_album.html', form=form)
+
+
+def save_changes(recording, form, new=False):
+    """
+    Save the changes to the database
+    """
+    # Get data from form and assign it to the correct attributes
+    # of the SQLAlchemy table object
+
+
+    recording.album_name = form.album_name.data
+    recording.label = form.label.data
+    recording.label_number = form.label_number.data
+
+
+#    if new:
+        # Add the new album to the database
+        #db_session.add(album)
+
+    # commit the data to the database
+    #db_session.commit()
+
+@app.route('/new_artist', methods=['GET', 'POST'])
+def new_artist():
+    """
+    Add a new album
+    """
+    form = ArtistForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+
+        exists = Artist.query.filter(Artist.artist_name == form.artist_name.data).first()
+
+        if exists:
+            message = form.artist_name.data+" already exists in the database!"
+        else:
+
+
+            new_artist = Artist()
+            new_artist.artist_name = form.artist_name.data
+            ts = int(time.time())
+            new_artist.id = ts
+            # save the album
+            #recording = Recording()
+
+            try:
+                db.session.add(new_artist)
+                db.session.commit()
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                message = "ERROR: "+ str(e.__dict__['orig'])
+            else:
+                message = "Successfully Added Artist: " + new_artist.artist_name + ", with ID: "+str(new_artist.id)
+        #save_changes(recording, form, new=True)
+        flash(message)
+        return redirect('/')
+
+    return render_template('new_artist.html', form=form)
