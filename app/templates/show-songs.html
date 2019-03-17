@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+     <table border= 1>
+         <thead>
+            <tr>
+               <th>Song ID</th>
+                <th>Song Name</th>
+            </tr>
+         </thead>
+
+            {% for name in songs %}
+               <tr>
+                   <td>{{ name.id }}</td>
+                  <td>{{ name.song_name }}</td>
+
+               </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+{% endblock %}

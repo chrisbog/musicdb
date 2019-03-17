@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+     <table border= 1>
+         <thead>
+            <tr>
+               <th>Recording ID</th>
+                <th>Artist Name</th>
+                <th>Recording Name</th>
+               <th>Label</th>
+                <th>Label Number</th>
+                <th>LP</th>
+               <th>Cassette</th>
+                <th>45</th>
+                <th>78</th>
+               <th>CD</th>
+                <th>Digital</th>
+                <th>Copy Cassette</th>
+                <th>Copy CD</th>
+            </tr>
+         </thead>
+
+            {% for name in recordings %}
+               <tr>
+                   <td>{{ name.Recording.id }}</td>
+                   <td>{{ name.Artist.artist_name}}</td>
+                   <td>{{ name.Recording.record_name }}</td>
+
+                   <td>{{ name.Recording.label }}</td>
+                   <td>{{ name.Recording.label_number }}</td>
+                   <td>{{ name.Recording.count_lp }}</td>
+                   <td>{{ name.Recording.count_cassette }}</td>
+                   <td>{{ name.Recording.count_45 }}</td>
+                   <td>{{ name.Recording.count_78 }}</td>
+                   <td>{{ name.Recording.count_cd }}</td>
+                   <td>{{ name.Recording.count_digital }}</td>
+                   <td>{{ name.Recording.count_copy_cassette }}</td>
+                   <td>{{ name.Recording.count_cd }}</td>
+
+               </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+{% endblock %}

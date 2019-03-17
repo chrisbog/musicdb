@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Welcome to the Recording Database!</h1>
+
+    <div class="selector">
+
+        <br>
+        <li><a href = "/show-artist">List the Artists</a></li>
+        <li><a href = "/show-recording">List the Recordings</a></li>
+        <li><a href = "/show-song">List the Songs</a></li>
+
+        <br>
+    </div>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% from "_formhelpers.html" import render_field %}
+<form method=post>
+  <dl>
+    {{ render_field(form.select) }}
+    <p>
+    {{ render_field(form.search) }}
+  </dl>
+  <p><input type=submit value=Search>
+</form>
+
+{% endblock %}
