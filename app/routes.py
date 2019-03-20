@@ -51,7 +51,7 @@ def search_results(search):
 
     if not results:
         print ("No Results Found")
-        flash('No results found!')
+        flash('No results found!',category="warning")
         return redirect('/')
     else:
         # display results
@@ -138,6 +138,7 @@ def new_artist():
 
         if exists:
             message = form.artist_name.data+" already exists in the database!"
+            category="danger"
         else:
 
 
@@ -156,8 +157,9 @@ def new_artist():
                 message = "ERROR: "+ str(e.__dict__['orig'])
             else:
                 message = "Successfully Added Artist: " + new_artist.artist_name + ", with ID: "+str(new_artist.id)
+                category = "success"
         #save_changes(recording, form, new=True)
-        flash(message)
+        flash(message,category=category)
         return redirect('/')
 
     return render_template('new_artist.html', form=form)

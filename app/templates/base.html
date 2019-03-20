@@ -16,21 +16,32 @@
     <div class="navbar bavbar-inverse navbar-fixed-top" role="navigation">
 
 <ul class="nav nav-tabs">
-    <li class="nav-item">
-            <a class="nav-link" href = "/show-artist">List the Artists</a>
-        </li>
         <li class="nav-item">
-            <a class="nav-link" href = "/show-recording">List the Recordings</a>
+            <a class="nav-link" href = "/">Home</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href = "/show-song">List the Songs</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('.new_album') }}"> New Album </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('.new_artist') }}"> New Artist </a>
-        </li>
+    <div class="dropdown">
+  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    View Tables
+  </a>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    <a class="dropdown-item" href = "/show-artist">Artist</a>
+    <a class="dropdown-item" href = "/show-recording">Recording</a>
+    <a class="dropdown-item" href = "/show-song">Song</a>
+  </div>
+</div>
+
+        <div class="dropdown">
+  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Add
+  </a>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    <a class="dropdown-item" href="{{ url_for('.new_album') }}">Album</a>
+    <a class="dropdown-item" href="{{ url_for('.new_artist') }}">Artist</a>
+  </div>
+</div>
+
     </li>
 
 </ul>
@@ -43,5 +54,9 @@
     <div class="container">
         {% block content %}{% endblock %}
     </div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     </body>
 </html>
