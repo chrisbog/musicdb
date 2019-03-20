@@ -1,11 +1,47 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Recording Database</title>
+        <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
+         <link href="{{ url_for('static',filename='css/main.css') }}" rel="stylesheet">
     </head>
     <body>
-        <div>Recording Database: <a href="/index">Home</a></div>
-        <hr>
+            <div class="container">
+    <h3>Music Recording Database</h3>
+            </div>
+        <div class="container">
+    <div class="navbar bavbar-inverse navbar-fixed-top" role="navigation">
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+            <a class="nav-link" href = "/show-artist">List the Artists</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href = "/show-recording">List the Recordings</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href = "/show-song">List the Songs</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('.new_album') }}"> New Album </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('.new_artist') }}"> New Artist </a>
+        </li>
+    </li>
+
+</ul>
+    </div>
+        </div>
+
+</ul>
+
+
+    <div class="container">
         {% block content %}{% endblock %}
+    </div>
     </body>
 </html>
