@@ -2,7 +2,7 @@
 
 {% block content %}
 
-     <table border= 1>
+<table border=1 xmlns="http://www.w3.org/1999/html">
          <thead>
             <tr>
                <th>Artist ID</th>
@@ -14,7 +14,7 @@
                <tr>
                    <td>{{ name.id }}</td>
                   <td>{{ name.artist_name }}</td>
-
+                   <td><a href="{{ url_for('newrecording',artistid=name.id) }} "><button type="button">Add Recording...</button></a></td>
                </tr>
             {% endfor %}
          </tbody>

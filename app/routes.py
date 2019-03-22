@@ -91,14 +91,42 @@ def new_album():
     """
     Add a new album
     """
+
+    print ("New_Album")
     form = AlbumForm(request.form)
 
     if request.method == 'POST' and form.validate():
         # save the album
         recording = Recording()
 
-        save_changes(recording, form, new=True)
-        flash("Entering Album"+form.album_name.data)
+        ts = int(time.time())
+        recording.id = ts
+        recording.artist_id = form.artist_id
+        recording.record_name = form.album_name
+        recording.label_number = form.label_number
+        recording.label = form.label
+        recording.count_lp = form.count_lp
+        recording.count_45 = form.count_45
+        recording.count_78 = form.count_78
+        recording.count_cassette = form.count_cassette
+        recording.count_copy_cassette = form.count_copy_cassette
+        recording.count_cd = form.count_cd
+        recording.count_copy_cd = form.count_copy_cd
+        recording.count_digital = form.count_digital
+
+        try:
+            db.session.add(recording)
+            db.session.commit()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            message = "ERROR: " + str(e.__dict__['orig'])
+            category="danger"
+        else:
+            message = "Successfully Added Recording: " + recording.record_name + ", with ID: " + str(recording.id)
+            category = "success"
+
+        flash("Entering Album: "+form.album_name.data,category="success")
+
         return redirect('/')
 
 
@@ -155,11 +183,65 @@ def new_artist():
             except SQLAlchemyError as e:
                 db.session.rollback()
                 message = "ERROR: "+ str(e.__dict__['orig'])
+                category="danger"
             else:
                 message = "Successfully Added Artist: " + new_artist.artist_name + ", with ID: "+str(new_artist.id)
                 category = "success"
         #save_changes(recording, form, new=True)
-        flash(message,category=category)
+
         return redirect('/')
 
     return render_template('new_artist.html', form=form)
+
+def save_form(form,artistid):
+
+    recording = Recording()
+
+
+    ts = int(time.time())
+    recording.id = ts
+    #recording.artist_id = form.artist_id.data
+    recording.artist_id = artistid
+    recording.record_name = form.album_name.data
+    recording.label_number = form.label_number.data
+    recording.label = form.label.data
+    recording.type = form.label.data
+    recording.cover = form.cover.data
+    recording.word = form.word.data
+    recording.count_lp = form.count_lp.data
+    recording.count_45 = form.count_45.data
+    recording.count_78 = form.count_78.data
+    recording.count_cassette = form.count_cassette.data
+    recording.count_copy_cassette = form.count_copy_cassette.data
+    recording.count_cd = form.count_cd.data
+    recording.count_copy_cd = form.count_copy_cd.data
+    recording.count_digital = form.count_digital.data
+
+    try:
+        db.session.add(recording)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        message = "ERROR: " + str(e.__dict__['orig'])
+        category = "danger"
+    else:
+        message = "Successfully Added Recording: " + recording.record_name + ", with ID: " + str(recording.id)
+        category = "success"
+
+    flash(message, category=category)
+
+
+@app.route("/new_recording/<artistid>", methods=('GET', 'POST'))
+def newrecording(artistid):
+
+    print("Adding a new recording for ArtistID: "+artistid)
+
+    form = AlbumForm(request.form)
+    form.artist_id = artistid
+
+    if request.method == 'POST' and form.validate():
+        print ("Saving New Record")
+        save_form(form,artistid)
+        return redirect ('/')
+
+    return render_template('new_album.html', form=form)

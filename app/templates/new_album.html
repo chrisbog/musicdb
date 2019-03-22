@@ -9,9 +9,21 @@
 {% from "_formhelpers.html" import render_field %}
 <form method=post>
     <dl>
+
         {{ render_field(form.album_name) }}
         {{ render_field(form.label) }}
         {{ render_field(form.label_number) }}
+        {{ render_field(form.cover) }}
+        {{ render_field(form.word) }}
+        {{ render_field(form.count_cassette) }}
+        {{ render_field(form.count_lp) }}
+        {{ render_field(form.count_45) }}
+        {{ render_field(form.count_78) }}
+        {{ render_field(form.count_cd) }}
+        {{ render_field(form.count_digital) }}
+        {{ render_field(form.count_copy_cassette) }}
+        {{ render_field(form.count_copy_cd) }}
+
     </dl>
     <p><input type=submit value=Submit>
 </form>
