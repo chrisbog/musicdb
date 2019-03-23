@@ -9,6 +9,7 @@ class MusicSearchForm(Form):
 class AlbumForm(Form):
 
     artist_id = IntegerField("Artist ID")
+    artist_name = StringField('Artist Name',render_kw={'readonly': True})
     album_name = StringField('Album Title')
     label = StringField('Label')
     label_number = StringField('Label Number')

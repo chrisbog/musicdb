@@ -7,6 +7,7 @@
             <tr>
                <th>Artist ID</th>
                 <th>Artist Name</th>
+                <th>Add Recording</th>
             </tr>
          </thead>
 
@@ -14,7 +15,7 @@
                <tr>
                    <td>{{ name.id }}</td>
                   <td>{{ name.artist_name }}</td>
-                   <td><a href="{{ url_for('newrecording',artistid=name.id) }} "><button type="button">Add Recording...</button></a></td>
+                   <td><a href="{{ url_for('newrecording',artistid=name.id) }} "><button type="button" class="btn btn-primary btn-sm">Add Recording...</button></a></td>
                </tr>
             {% endfor %}
          </tbody>
