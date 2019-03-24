@@ -18,15 +18,28 @@
 {% endwith %}
 
 {% from "_formhelpers.html" import render_field %}
+<div class="container" style="border:1px solid #cecece" >
+  <h3>Quick Search For Music</h3>
 <form method=post>
-  <dl>
-    {{ render_field(form.select) }}
-    <p>
-    {{ render_field(form.search) }}
-  </dl>
-  <p><input type=submit value=Search>
-</form>
+    <div class="row">
+      <div class="col-md-auto">
+        {{ render_field(form.select) }}
+      </div>
+      <div class="col-md-auto">
+        {{ render_field(form.search) }}
+      </div>
+      <div class="col-md-auto">
 
+      </div>
+    </div>
+  <input type=submit value=Search>
+  <p>
+
+  </p>
+</form>
+</div>
+<p></p>
+<div class="container" style="border:1px solid #cecece" >
 <h3>Database Summary</h3>
 <ul class="list-group">
   <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -42,7 +55,10 @@
     <span class="badge badge-primary badge-pill">{{ songcount }}</span>
   </li>
 </ul>
+  <p>
 
+  </p>
+</div>
 
 
 

@@ -76,32 +76,18 @@ def show_recording():
 
 @app.route('/show-song')
 def show_song():
+
+
    return render_template('show-songs.html', songs = Song.query.all() )
-
-def save_changes(recording, form, new=False):
-    """
-    Save the changes to the database
-    """
-    # Get data from form and assign it to the correct attributes
-    # of the SQLAlchemy table object
-
-
-    recording.album_name = form.album_name.data
-    recording.label = form.label.data
-    recording.label_number = form.label_number.data
-
-
-#    if new:
-        # Add the new album to the database
-        #db_session.add(album)
-
-    # commit the data to the database
-    #db_session.commit()
 
 @app.route('/new_artist', methods=['GET', 'POST'])
 def new_artist():
     """
-    Add a new album
+    This function will add a new Artist to the database
+
+    :param none:
+    :returns: new_album HTML Template to add the new userl
+    :raises none
     """
     form = ArtistForm(request.form)
 
@@ -119,8 +105,6 @@ def new_artist():
             new_artist.artist_name = form.artist_name.data
             ts = int(time.time())
             new_artist.id = ts
-            # save the album
-            #recording = Recording()
 
             try:
                 db.session.add(new_artist)
@@ -132,20 +116,25 @@ def new_artist():
             else:
                 message = "Successfully Added Artist: " + new_artist.artist_name + ", with ID: "+str(new_artist.id)
                 category = "success"
-        #save_changes(recording, form, new=True)
 
         return redirect('/')
 
     return render_template('new_artist.html', form=form)
 
 def save_form(form,artistid):
+    """
+    This function will save the data when adding a new recording
 
+    :param form: The form object that we defined
+    :param artistid: The artist id that we want to add a recording it
+    :returns: Boolean value if the insertion was successful
+    :raises none
+    """
     recording = Recording()
 
     ts = int(time.time())
     recording.id = ts
 
-    #recording.artist_id = form.artist_id.data
     recording.artist_id = artistid
     recording.record_name = form.album_name.data
     recording.label_number = form.label_number.data
@@ -169,11 +158,15 @@ def save_form(form,artistid):
         db.session.rollback()
         message = "ERROR: " + str(e.__dict__['orig'])
         category = "danger"
+        rc = False
     else:
         message = "Successfully Added Recording: " + recording.record_name + ", with ID: " + str(recording.id)
         category = "success"
+        rc = True
 
     flash(message, category=category)
+
+    return(rc)
 
 
 @app.route("/new_recording/<artistid>", methods=('GET', 'POST'))
@@ -181,9 +174,9 @@ def newrecording(artistid):
     """
     This function will create the HTML page to add a new recording given an artist ID.
 
-    :param artistid: The ID of the Arits
+    :param artistid: The ID of the Artist
     :returns: new_album HTML Template to add the new user
-    :raises keyError: raises an exception
+    :raises none
     """
     qry = db.session.query(Artist).filter(Artist.id == artistid)
     results = qry.first()

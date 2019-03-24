@@ -2,41 +2,47 @@
 
 {% block content %}
 
-     <table border= 1>
-         <thead>
+
+     <table class="table table-bordered">
+         <thead class="thead-light text-center" >
             <tr>
-               <th>Recording ID</th>
-                <th>Artist Name</th>
-                <th>Recording Name</th>
-               <th>Label</th>
-                <th>Label Number</th>
-                <th>LP</th>
-               <th>Cassette</th>
-                <th>45</th>
-                <th>78</th>
-               <th>CD</th>
-                <th>Digital</th>
-                <th>Copy Cassette</th>
-                <th>Copy CD</th>
+
+                <th colspan="5"></th>
+                <th colspan="8">Counts</th>
+            </tr>
+            <tr>
+               <th scope="col">Recording ID</th>
+                <th scope="col">Artist Name</th>
+                <th scope="col">Recording Name</th>
+               <th scope="col">Label</th>
+                <th scope="col">Label Number</th>
+                <th scope="col">LP</th>
+               <th scope="col">Cassette</th>
+                <th scope="col">45</th>
+                <th scope="col">78</th>
+               <th scope="col">CD</th>
+                <th scope="col">Digital</th>
+                <th scope="col">Copy Cassette</th>
+                <th scope="col">Copy CD</th>
             </tr>
          </thead>
 
             {% for name in recordings %}
                <tr>
-                   <td>{{ name.Recording.id }}</td>
+                   <th scope="row">{{ name.Recording.id }}</th>
                    <td>{{ name.Artist.artist_name}}</td>
                    <td>{{ name.Recording.record_name }}</td>
 
                    <td>{{ name.Recording.label }}</td>
                    <td>{{ name.Recording.label_number }}</td>
-                   <td>{{ name.Recording.count_lp }}</td>
-                   <td>{{ name.Recording.count_cassette }}</td>
-                   <td>{{ name.Recording.count_45 }}</td>
-                   <td>{{ name.Recording.count_78 }}</td>
-                   <td>{{ name.Recording.count_cd }}</td>
-                   <td>{{ name.Recording.count_digital }}</td>
-                   <td>{{ name.Recording.count_copy_cassette }}</td>
-                   <td>{{ name.Recording.count_cd }}</td>
+                   <td>{% if name.Recording.count_lp != 0 %} {{ name.Recording.count_lp }} {% endif %} </td>
+                   <td>{% if name.Recording.count_cassette != 0 %} {{ name.Recording.count_cassette }} {% endif %}</td>
+                   <td>{% if name.Recording.count_45 != 0 %} {{ name.Recording.count_45 }} {% endif %}</td>
+                   <td>{% if name.Recording.count_78 != 0 %} {{ name.Recording.count_78 }} {% endif %}</td>
+                   <td>{% if name.Recording.count_cd != 0 %} {{ name.Recording.count_cd }} {% endif %}</td>
+                   <td>{% if name.Recording.count_digital != 0 %} {{ name.Recording.count_digital }}{% endif %} </td>
+                   <td>{% if name.Recording.count_copy_cassette != 0 %} {{ name.Recording.count_copy_cassette }} {% endif %}</td>
+                   <td>{% if name.Recording.count_cd != 0 %} {{ name.Recording.count_cd }} {% endif %}</td>
 
                </tr>
             {% endfor %}
