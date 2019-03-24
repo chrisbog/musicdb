@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, SelectField, IntegerField, BooleanField
+from wtforms import Form, StringField, SelectField, IntegerField, BooleanField, TextAreaField
 
 class MusicSearchForm(Form):
     choices = [('Artist', 'Artist'),
@@ -23,6 +23,8 @@ class AlbumForm(Form):
     count_digital = IntegerField("Digital")
     count_copy_cassette = IntegerField("Copy Cassette")
     count_copy_cd = IntegerField("Copy CD")
+
+    songs = TextAreaField("Songs")
 
 
 class ArtistForm(Form):

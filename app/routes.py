@@ -151,6 +151,8 @@ def save_form(form,artistid):
     recording.count_copy_cd = form.count_copy_cd.data
     recording.count_digital = form.count_digital.data
 
+    print (form.songs.data)
+
     try:
         db.session.add(recording)
         db.session.commit()
