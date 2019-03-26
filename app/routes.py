@@ -153,33 +153,16 @@ def save_form(form,artistid):
     recording.count_digital = form.count_digital.data
 
 
-    songlist = []
-    songs = form.songs.data.splitlines()
-    for i in songs:
-        temp = Song()
-        temp.record_id = recording.id
-        temp.song_name = i
-        temp.id = uuid.uuid1().int>>64
-        print (temp)
-
-
-    #print (form.songs.data)
-
-
-
-    print (songs)
-    print (songlist)
 
     try:
         db.session.add(recording)
 
-        songlist = []
         songs = form.songs.data.splitlines()
         for i in songs:
             temp = Song()
             temp.record_id = recording.id
             temp.song_name = i
-            temp.id = str(uuid.uuid1().int >> 64)
+            temp.id = time.strftime("%Y%j%H%M")+str(time.process_time_ns()//1000)
             print(temp)
             db.session.add(temp)
 
