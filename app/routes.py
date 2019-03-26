@@ -4,7 +4,8 @@ from app import db
 from app.models import Artist,Recording,Song
 from app.forms import MusicSearchForm,AlbumForm,ArtistForm
 from sqlalchemy.exc import SQLAlchemyError
-import time
+import time, datetime
+import uuid
 
 @app.route('/',methods=['GET', 'POST'])
 @app.route('/index',methods=['GET', 'POST'])
@@ -151,10 +152,37 @@ def save_form(form,artistid):
     recording.count_copy_cd = form.count_copy_cd.data
     recording.count_digital = form.count_digital.data
 
-    print (form.songs.data)
+
+    songlist = []
+    songs = form.songs.data.splitlines()
+    for i in songs:
+        temp = Song()
+        temp.record_id = recording.id
+        temp.song_name = i
+        temp.id = uuid.uuid1().int>>64
+        print (temp)
+
+
+    #print (form.songs.data)
+
+
+
+    print (songs)
+    print (songlist)
 
     try:
         db.session.add(recording)
+
+        songlist = []
+        songs = form.songs.data.splitlines()
+        for i in songs:
+            temp = Song()
+            temp.record_id = recording.id
+            temp.song_name = i
+            temp.id = str(uuid.uuid1().int >> 64)
+            print(temp)
+            db.session.add(temp)
+
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()

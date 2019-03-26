@@ -31,9 +31,9 @@ class Recording(db.Model):
         return '<Recording {}>'.format(self.record_name)
 
 class Song(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(20), primary_key=True)
     song_name = db.Column(db.String(35))
     record_id = db.Column(db.Integer, db.ForeignKey('recording.id'))
 
     def __repr__(self):
-        return '<Song {}>'.format(self.body)
+        return '<Song ID {},Record ID: {}, Song Name: {}>'.format(self.id,self.record_id, self.song_name)
