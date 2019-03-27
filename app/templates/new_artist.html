@@ -9,7 +9,11 @@
 {% from "_formhelpers.html" import render_field %}
 <form method=post>
     <dl>
-        {{ render_field(form.artist_name) }}
+
+       <div class="form-group">
+            <label for="artist_name">Artist Name:</label>
+            <input type="text" class="form-control" id="artist_name" name="artist_name" placeholder="Enter Artist Name"></div>
+
     </dl>
     <p><input type=submit value=Submit>
 </form>

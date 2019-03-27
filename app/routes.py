@@ -118,6 +118,8 @@ def new_artist():
                 message = "Successfully Added Artist: " + new_artist.artist_name + ", with ID: "+str(new_artist.id)
                 category = "success"
 
+        flash(message, category=category)
+
         return redirect('/')
 
     return render_template('new_artist.html', form=form)
