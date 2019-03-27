@@ -203,6 +203,14 @@ def newrecording(artistid):
         form.artist_id.data = artistid
         form.artist_name.data = results.artist_name
 
+        form.count_lp.data = 0
+        form.count_45.data = 0
+        form.count_78.data = 0
+        form.count_cassette.data = 0
+        form.count_copy_cassette.data = 0
+        form.count_cd.data = 0
+        form.count_copy_cd.data = 0
+        form.count_digital.data = 0
 
         if request.method == 'POST' and form.validate():
             print ("Saving New Record")
