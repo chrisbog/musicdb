@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<doctype html>
+<title>New Album -</title>
+<h4>New Album for {{ artistname }}</h4>
+
+{% from "_formhelpers.html" import render_field %}
+<form method=post>
+    <dl>
+
+        {{ render_field(form.album_name) }}
+        {{ render_field(form.label) }}
+        {{ render_field(form.label_number) }}
+        <div class="container" style="border:1px solid #cecece" >
+        <div class="row">
+                  <div class="col-md-auto">
+                      {{ render_field(form.cover) }}
+                  </div>
+                  <div class="col-md-auto">
+                        {{ render_field(form.word) }}
+                  </div>
+        </div>
+        </div>
+    <p>
+
+    </p>
+<div class="container" style="border:1px solid #cecece" >
+        <div class="row">
+                  <div class="col-md-auto">
+                      {{ render_field(form.count_cassette) }}
+                  </div>
+                  <div class="col-md-auto">
+                      {{ render_field(form.count_lp) }}
+                                        </div>
+                  <div class="col-md-auto">
+                      {{ render_field(form.count_45) }}
+                                        </div>
+                  <div class="col-md-auto">
+                      {{ render_field(form.count_78) }}
+                                        </div>
+                  <div class="col-md-auto">
+                      {{ render_field(form.count_cd) }}
+                                        </div>
+                  <div class="col-md-auto">
+                      {{ render_field(form.count_digital) }}
+                                        </div>
+                  <div class="col-md-auto">
+                      {{ render_field(form.count_copy_cassette) }}
+                                        </div>
+                  <div class="col-md-auto">
+                      {{ render_field(form.count_copy_cd) }}
+                                        </div>
+        </div>
+</div>
+      {{ render_field(form.songs, cols="80", rows="14") }}
+    </dl>
+
+</form>
+
+
+
+{% endblock %}
