@@ -5,14 +5,21 @@
 <doctype html>
 <title>New Album -</title>
 <h4>New Album for {{ artistname }}</h4>
-
 {% from "_formhelpers.html" import render_field %}
 <form method=post>
     <dl>
+        <div class="form-group">
+            <label for="album_name">Album Name:</label>
+            <input type="text" class="form-control" id="album_name" name="album_name" placeholder="Enter Album Name"></div>
 
-        {{ render_field(form.album_name) }}
-        {{ render_field(form.label) }}
-        {{ render_field(form.label_number) }}
+        <div class="form-group">
+            <label for="album_name">Album Label:</label>
+            <input type="text" class="form-control" id="label" name="label" placeholder="Enter Album Label"> </div>
+
+        <div class="form-group">
+            <label for="album_name">Album Label Number:</label>
+            <input type="text" class="form-control" id="label_number" name="label_number" placeholder="Enter Album Label Number"> </div>
+
         <div class="container" style="border:1px solid #cecece" >
         <div class="row">
                   <div class="col-md-auto">
@@ -54,7 +61,7 @@
                                         </div>
         </div>
 </div>
-      {{ render_field(form.songs) }}
+      {{ render_field(form.songs, cols="80", rows="14") }}
     </dl>
 
 

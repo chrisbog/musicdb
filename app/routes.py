@@ -213,3 +213,37 @@ def newrecording(artistid):
         category = "danger"
         flash(message, category=category)
         return redirect ('/')
+
+@app.route("/view_recording/<recordid>", methods=('GET', 'POST'))
+def viewrecordingdetails(recordid):
+    print (recordid)
+
+
+
+
+    qry = db.session.query(Recording).filter(Recording.id == recordid)
+    results = qry.first()
+
+    form = AlbumForm()
+
+    form.album_name.data = results.record_name
+    form.label_number.data = results.label_number
+    form.label.data = results.label
+    form.label.data = results.type
+    form.cover.data = results.cover
+    form.word.data = results.word
+    form.count_lp.data = results.word
+    form.count_45.data = results.word
+    form.count_78.data = results.word
+    form.count_cassette.data = results.count_cassette
+    form.count_copy_cassette.data = results.count_copy_cassette
+    form.count_cd.data = results.count_cd
+    form.count_copy_cd.data = results.count_copy_cd
+    form.count_digital.data = results.count_digital
+
+
+
+    qry = db.session.query(Artist).filter(Artist.id == results.artist_id)
+    results = qry.first()
+
+    return render_template('album-details.html', form=form, artistname=results.artist_name)

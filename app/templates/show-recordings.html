@@ -9,6 +9,7 @@
 
                 <th colspan="5"></th>
                 <th colspan="8">Counts</th>
+                <th colspan="1"></th>
             </tr>
             <tr>
                <th scope="col">Recording ID</th>
@@ -24,6 +25,7 @@
                 <th scope="col">Digital</th>
                 <th scope="col">Copy Cassette</th>
                 <th scope="col">Copy CD</th>
+                <th scope="col">Details</th>
             </tr>
          </thead>
 
@@ -43,6 +45,7 @@
                    <td>{% if name.Recording.count_digital != 0 %} {{ name.Recording.count_digital }}{% endif %} </td>
                    <td>{% if name.Recording.count_copy_cassette != 0 %} {{ name.Recording.count_copy_cassette }} {% endif %}</td>
                    <td>{% if name.Recording.count_cd != 0 %} {{ name.Recording.count_cd }} {% endif %}</td>
+                    <td><a href="{{ url_for('viewrecordingdetails',recordid=name.Recording.id) }} "><button type="button" class="btn btn-primary btn-sm">View Details...</button></a></td>
 
                </tr>
             {% endfor %}
