@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<doctype html>
+<title>Configuration -</title>
+<h2>Configuration</h2>
+
+{% from "_formhelpers.html" import render_field %}
+
+<form method=post>
+    {{ render_field(form.debugmode) }}
+
+    <p><input type=submit value=Submit>
+</form>
+
+{% endblock %}
