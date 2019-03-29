@@ -2,7 +2,7 @@ from flask import render_template, request, flash, redirect
 from musicdb import app
 from app import db
 from app.models import Artist,Recording,Song
-from app.forms import MusicSearchForm,AlbumForm,ArtistForm
+from app.forms import MusicSearchForm,AlbumForm,ArtistForm,SetupForm
 from sqlalchemy.exc import SQLAlchemyError
 import time, datetime
 import uuid
@@ -10,6 +10,13 @@ import uuid
 @app.route('/',methods=['GET', 'POST'])
 @app.route('/index',methods=['GET', 'POST'])
 def main():
+    """
+    This function will create the HTML page to render the home page
+
+    :param none
+    :returns: index.html HTML Template which represents the home page
+    :raises none
+    """
     search = MusicSearchForm(request.form)
     if request.method == 'POST':
         print (search)
@@ -18,13 +25,20 @@ def main():
     artistcount = db.session.query(Artist).count()
     recordcount = db.session.query(Recording).count()
     songcount = db.session.query(Song).count()
+
     return render_template("index.html", form=search, recordcount=recordcount, artistcount=artistcount,
                            songcount=songcount)
 
 
 @app.route('/results')
 def search_results(search):
+    """
+    This function will create the HTML page to render the search results page
 
+    :param search: represents the Search form that was populated
+    :returns: show-recordings.html HTML Template which represents the search results home page
+    :raises none
+    """
     results = []
     print(search.select)
     search_string = search.data['search']
@@ -67,19 +81,40 @@ def search_results(search):
 
 @app.route('/show-artist')
 def show_artist():
-   return render_template('show-artists.html', artists = Artist.query.all() )
+    """
+    This function displays the show-artists template to the screen
+
+    :param none:
+    :returns: show-artists HTML Template to display the songs
+    :raises none
+    """
+    return render_template('show-artists.html', artists = Artist.query.all() )
 
 @app.route('/show-recording')
 def show_recording():
+    """
+    This function displays the show-recording template to the screen
+
+    :param none:
+    :returns: show-recording HTML Template to display the songs
+    :raises none
+    """
+
     qry = db.session.query(Recording,Artist).filter(Recording.artist_id==Artist.id)
     results=qry.all()
     return render_template('show-recordings.html', recordings = results )
 
 @app.route('/show-song')
 def show_song():
+    """
+    This function displays the show-song template to the screen
 
+    :param none:
+    :returns: show-song HTML Template to display the songs
+    :raises none
+    """
 
-   return render_template('show-songs.html', songs = Song.query.all() )
+    return render_template('show-songs.html', songs = Song.query.all() )
 
 @app.route('/new_artist', methods=['GET', 'POST'])
 def new_artist():
@@ -226,10 +261,13 @@ def newrecording(artistid):
 
 @app.route("/view_recording/<recordid>", methods=('GET', 'POST'))
 def viewrecordingdetails(recordid):
-    print (recordid)
+    """
+    This function will create the HTML page to view an existing recording given an recordid ID.
 
-
-
+    :param artistid: The ID of the Record
+    :returns: album_details HTML Template to add the new user
+    :raises none
+    """
 
     qry = db.session.query(Recording).filter(Recording.id == recordid)
     results = qry.first()
@@ -257,3 +295,24 @@ def viewrecordingdetails(recordid):
     results = qry.first()
 
     return render_template('album-details.html', form=form, artistname=results.artist_name)
+
+
+@app.route("/setup", methods=('GET', 'POST'))
+def setup():
+
+
+    form = SetupForm()
+
+    if request.method == 'POST' and form.validate():
+
+        if request.form.get('debugmode') == 'y':
+            app.config['DEBUGAPP'] = True
+        else:
+            app.config['DEBUGAPP'] = False
+
+        return redirect('/')
+
+    else:
+        form.debugmode.data = app.config.get('DEBUGAPP')
+
+    return render_template('config.html',form=form)

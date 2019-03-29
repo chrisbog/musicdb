@@ -4,12 +4,11 @@
 
 <doctype html>
 <title>New Album -</title>
-<h4>New Album for {{ artistname }}</h4>
+<h4>Album Details for {{ form.album_name }}</h4>
 
 {% from "_formhelpers.html" import render_field %}
 <form method=post>
     <dl>
-
         {{ render_field(form.album_name) }}
         {{ render_field(form.label) }}
         {{ render_field(form.label_number) }}

@@ -20,6 +20,7 @@
 {% from "_formhelpers.html" import render_field %}
 <div class="container" style="border:1px solid #cecece" >
   <h3>Quick Search For Music</h3>
+
 <form method=post>
     <div class="row">
       <div class="col-md-auto">
@@ -44,15 +45,15 @@
 <ul class="list-group">
   <li class="list-group-item d-flex justify-content-between align-items-center">
     Recordings
-    <span class="badge badge-primary badge-pill">{{ recordcount }}</span>
+    <div class="d-inline p-2 bg-primary text-white">{{ recordcount }}</div>
   </li>
   <li class="list-group-item d-flex justify-content-between align-items-center">
     Artists
-    <span class="badge badge-primary badge-pill">{{ artistcount }}</span>
+    <div class="d-inline p-2 bg-primary text-white">{{ artistcount }}</div>
   </li>
   <li class="list-group-item d-flex justify-content-between align-items-center">
     Songs
-    <span class="badge badge-primary badge-pill">{{ songcount }}</span>
+    <div class="d-inline p-2 bg-primary text-white">{{ songcount }}</div>
   </li>
 </ul>
   <p>

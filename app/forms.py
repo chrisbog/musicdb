@@ -29,3 +29,6 @@ class AlbumForm(Form):
 
 class ArtistForm(Form):
     artist_name = StringField('Artist')
+
+class SetupForm(Form):
+    debugmode = BooleanField('Debug',default=False)
