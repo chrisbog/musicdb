@@ -180,14 +180,18 @@ def save_form(form,artistid):
     recording.type = form.label.data
     recording.cover = form.cover.data
     recording.word = form.word.data
-    recording.count_lp = form.count_lp.data
-    recording.count_45 = form.count_45.data
-    recording.count_78 = form.count_78.data
-    recording.count_cassette = form.count_cassette.data
-    recording.count_copy_cassette = form.count_copy_cassette.data
-    recording.count_cd = form.count_cd.data
-    recording.count_copy_cd = form.count_copy_cd.data
-    recording.count_digital = form.count_digital.data
+
+    # Not Sure this is the best way to get data from the form, but it is the only option that would work
+
+    recording.count_lp = int(form.count_lp.raw_data[0])
+    recording.count_45 = int(form.count_45.raw_data[0])
+    recording.count_78 = int(form.count_78.raw_data[0])
+    recording.count_cassette = int(form.count_cassette.raw_data[0])
+    recording.count_copy_cassette = int(form.count_copy_cassette.raw_data[0])
+    recording.count_cd = int(form.count_cd.raw_data[0])
+    recording.count_copy_cd = int(form.count_copy_cd.raw_data[0])
+    recording.count_digital = int(form.count_digital.raw_data[0])
+
 
 
 
@@ -280,9 +284,9 @@ def viewrecordingdetails(recordid):
     form.label.data = results.type
     form.cover.data = results.cover
     form.word.data = results.word
-    form.count_lp.data = results.word
-    form.count_45.data = results.word
-    form.count_78.data = results.word
+    form.count_lp.data = results.count_lp
+    form.count_45.data = results.count_45
+    form.count_78.data = results.count_78
     form.count_cassette.data = results.count_cassette
     form.count_copy_cassette.data = results.count_copy_cassette
     form.count_cd.data = results.count_cd
@@ -290,9 +294,17 @@ def viewrecordingdetails(recordid):
     form.count_digital.data = results.count_digital
 
 
-
     qry = db.session.query(Artist).filter(Artist.id == results.artist_id)
     results = qry.first()
+
+    song_query = db.session.query(Song).filter( Song.record_id == recordid)
+    song_results = song_query.all()
+
+    tracks=""
+    for song in song_results:
+        tracks += song.song_name+"\n"
+    print (tracks)
+    form.songs.data = tracks
 
     return render_template('album-details.html', form=form, artistname=results.artist_name)
 
