@@ -242,21 +242,23 @@ def newrecording(artistid):
         form.artist_id.data = artistid
         form.artist_name.data = results.artist_name
 
-        form.count_lp.data = 0
-        form.count_45.data = 0
-        form.count_78.data = 0
-        form.count_cassette.data = 0
-        form.count_copy_cassette.data = 0
-        form.count_cd.data = 0
-        form.count_copy_cd.data = 0
-        form.count_digital.data = 0
 
         if request.method == 'POST' and form.validate():
             print ("Saving New Record")
             save_form(form,artistid)
             return redirect ('/')
 
-        return render_template('new_album.html', form=form, artistname=results.artist_name)
+        else:
+            form.count_lp.data = 0
+            form.count_45.data = 0
+            form.count_78.data = 0
+            form.count_cassette.data = 0
+            form.count_copy_cassette.data = 0
+            form.count_cd.data = 0
+            form.count_copy_cd.data = 0
+            form.count_digital.data = 0
+
+            return render_template('new_album.html', form=form, artistname=results.artist_name)
     else:
         message = "Unable to add recording to Artist ID " + artistid + ". Artist doesn't exist, please add a new artist!"
         category = "danger"
@@ -281,7 +283,6 @@ def viewrecordingdetails(recordid):
     form.album_name.data = results.record_name
     form.label_number.data = results.label_number
     form.label.data = results.label
-    form.label.data = results.type
     form.cover.data = results.cover
     form.word.data = results.word
     form.count_lp.data = results.count_lp
