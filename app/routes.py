@@ -7,6 +7,10 @@ from sqlalchemy.exc import SQLAlchemyError
 import time, datetime
 import uuid
 
+#Global Data to Persist Between Function Calls
+global_album_storage=[]
+
+
 @app.route('/',methods=['GET', 'POST'])
 @app.route('/index',methods=['GET', 'POST'])
 def main():
@@ -275,39 +279,55 @@ def viewrecordingdetails(recordid):
     :raises none
     """
 
-    qry = db.session.query(Recording).filter(Recording.id == recordid)
-    results = qry.first()
-
-    form = AlbumForm()
-
-    form.album_name.data = results.record_name
-    form.label_number.data = results.label_number
-    form.label.data = results.label
-    form.cover.data = results.cover
-    form.word.data = results.word
-    form.count_lp.data = results.count_lp
-    form.count_45.data = results.count_45
-    form.count_78.data = results.count_78
-    form.count_cassette.data = results.count_cassette
-    form.count_copy_cassette.data = results.count_copy_cassette
-    form.count_cd.data = results.count_cd
-    form.count_copy_cd.data = results.count_copy_cd
-    form.count_digital.data = results.count_digital
+    if request.method == 'POST':
+        print("Attempting to Save Changes")
+        print (global_album_storage)
 
 
-    qry = db.session.query(Artist).filter(Artist.id == results.artist_id)
-    results = qry.first()
 
-    song_query = db.session.query(Song).filter( Song.record_id == recordid)
-    song_results = song_query.all()
+    else:
 
-    tracks=""
-    for song in song_results:
-        tracks += song.song_name+"\n"
-    print (tracks)
-    form.songs.data = tracks
 
-    return render_template('album-details.html', form=form, artistname=results.artist_name)
+        qry = db.session.query(Recording).filter(Recording.id == recordid)
+        results = qry.first()
+
+        form = AlbumForm()
+
+        #Save the form
+        global_album_storage.append((form))
+
+        form.album_name.data = results.record_name
+        form.label_number.data = results.label_number
+        form.label.data = results.label
+        form.cover.data = results.cover
+        form.word.data = results.word
+        form.count_lp.data = results.count_lp
+        form.count_45.data = results.count_45
+        form.count_78.data = results.count_78
+        form.count_cassette.data = results.count_cassette
+        form.count_copy_cassette.data = results.count_copy_cassette
+        form.count_cd.data = results.count_cd
+        form.count_copy_cd.data = results.count_copy_cd
+        form.count_digital.data = results.count_digital
+
+
+        qry = db.session.query(Artist).filter(Artist.id == results.artist_id)
+        results = qry.first()
+
+        song_query = db.session.query(Song).filter( Song.record_id == recordid)
+        song_results = song_query.all()
+
+        tracks_display=""
+        tracks=[]
+        for song in song_results:
+            tracks_display += song.song_name+"\n"
+            tracks.append(song.song_name)
+
+        form.songs.data = tracks_display
+        global_album_storage.append(tracks)
+        return render_template('album-details.html', form=form, artistname=results.artist_name)
+
+    return redirect ('/')
 
 
 @app.route("/setup", methods=('GET', 'POST'))
