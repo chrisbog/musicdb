@@ -163,7 +163,7 @@ def new_artist():
 
     return render_template('new_artist.html', form=form)
 
-def save_form(form,artistid):
+def save_form(form,artistid,new=False):
     """
     This function will save the data when adding a new recording
 
@@ -249,7 +249,7 @@ def newrecording(artistid):
 
         if request.method == 'POST' and form.validate():
             print ("Saving New Record")
-            save_form(form,artistid)
+            save_form(form,artistid,True)
             return redirect ('/')
 
         else:
@@ -269,6 +269,37 @@ def newrecording(artistid):
         flash(message, category=category)
         return redirect ('/')
 
+def update_records(album, form):
+
+
+    album.record_name = form.album_name.data
+    album.label_number = form.label_number.data
+    album.label = form.label.data
+    album.type = form.label.data
+    album.cover = form.cover.data
+    album.word = form.word.data
+
+    album.count_lp = int(form.count_lp.raw_data[0])
+    album.count_45 = int(form.count_45.raw_data[0])
+    album.count_78 = int(form.count_78.raw_data[0])
+    album.count_cassette = int(form.count_cassette.raw_data[0])
+    album.count_copy_cassette = int(form.count_copy_cassette.raw_data[0])
+    album.count_cd = int(form.count_cd.raw_data[0])
+    album.count_copy_cd = int(form.count_copy_cd.raw_data[0])
+    album.count_digital = int(form.count_digital.raw_data[0])
+
+
+    try:
+        db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        rc = False
+    else:
+        rc = True
+
+    return rc
+
+
 @app.route("/view_recording/<recordid>", methods=('GET', 'POST'))
 def viewrecordingdetails(recordid):
     """
@@ -283,8 +314,21 @@ def viewrecordingdetails(recordid):
         print("Attempting to Save Changes")
         print (global_album_storage)
 
+        qry = db.session.query(Recording).filter(Recording.id == recordid)
+        results = qry.first()
 
+        form=AlbumForm(formdata=request.form,obj=results)
 
+        success = update_records(results,form)
+        if not success:
+            message = "ERROR: " + str(e.__dict__['orig'])
+            category = "danger"
+        else:
+            message = "Successfully Updated Recording: " + results.record_name
+            category = "success"
+
+        flash(message, category=category)
+        return redirect ('/')
     else:
 
 
@@ -294,7 +338,7 @@ def viewrecordingdetails(recordid):
         form = AlbumForm()
 
         #Save the form
-        global_album_storage.append((form))
+
 
         form.album_name.data = results.record_name
         form.label_number.data = results.label_number
@@ -310,6 +354,7 @@ def viewrecordingdetails(recordid):
         form.count_copy_cd.data = results.count_copy_cd
         form.count_digital.data = results.count_digital
 
+        global_album_storage.append((form))
 
         qry = db.session.query(Artist).filter(Artist.id == results.artist_id)
         results = qry.first()
