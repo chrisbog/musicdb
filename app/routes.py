@@ -288,6 +288,45 @@ def update_records(album, form):
     album.count_copy_cd = int(form.count_copy_cd.raw_data[0])
     album.count_digital = int(form.count_digital.raw_data[0])
 
+    songs_edited = form.songs.data.splitlines()
+
+    song_query = db.session.query(Song).filter(Song.record_id == album.id)
+    song_results = song_query.all()
+
+    song_existing = []
+    for i in song_results:
+        song_existing.append(i.song_name)
+
+
+
+    if (songs_edited == song_results):
+        print("No Changes with Songs")
+    else:
+        print("Changes occured with Songs")
+
+        songs_in_orig_not_new = set(song_existing) - set(songs_edited)
+        songs_in_new_not_orig = set(songs_edited) - set(song_existing)
+
+        if len(songs_in_new_not_orig) > 0:
+            print("We need to add the following: "+str(songs_in_new_not_orig))
+            for i in songs_in_new_not_orig:
+                temp = Song()
+                temp.record_id = album.id
+                temp.song_name = i
+                temp.id = time.strftime("%Y%j%H%M") + str(time.process_time_ns() // 1000)
+                print(temp)
+                db.session.add(temp)
+
+        if len(songs_in_orig_not_new) > 0:
+            print("We need to delete the following: "+str(songs_in_orig_not_new))
+            for i in songs_in_orig_not_new:
+                print(i)
+                song_query = db.session.query(Song).filter(Song.record_id == album.id).filter(Song.song_name == i)
+                song_results = song_query.delete()
+                print(song_results)
+
+
+
 
     try:
         db.session.commit()
