@@ -4,8 +4,8 @@ from app import db
 from app.models import Artist,Recording,Song
 from app.forms import MusicSearchForm,AlbumForm,ArtistForm,SetupForm
 from sqlalchemy.exc import SQLAlchemyError
-import time, datetime
-import uuid
+from app.utils import generate_uniqueID
+import time
 
 #Global Data to Persist Between Function Calls
 global_album_storage=[]
@@ -207,7 +207,7 @@ def save_form(form,artistid,new=False):
             temp = Song()
             temp.record_id = recording.id
             temp.song_name = i
-            temp.id = time.strftime("%Y%j%H%M")+str(time.process_time_ns()//1000)
+            temp.id = generate_uniqueID()
             print(temp)
             db.session.add(temp)
 
@@ -313,7 +313,7 @@ def update_records(album, form):
                 temp = Song()
                 temp.record_id = album.id
                 temp.song_name = i
-                temp.id = time.strftime("%Y%j%H%M") + str(time.process_time_ns() // 1000)
+                temp.id = generate_uniqueID()
                 print(temp)
                 db.session.add(temp)
 
@@ -370,14 +370,12 @@ def viewrecordingdetails(recordid):
         return redirect ('/')
     else:
 
-
         qry = db.session.query(Recording).filter(Recording.id == recordid)
         results = qry.first()
 
         form = AlbumForm()
 
         #Save the form
-
 
         form.album_name.data = results.record_name
         form.label_number.data = results.label_number
@@ -416,6 +414,12 @@ def viewrecordingdetails(recordid):
 
 @app.route("/setup", methods=('GET', 'POST'))
 def setup():
+    '''
+    This function will display the setup page used for configuring the application.
+
+    :return: the config.html form or if it was a post, then a redirect back to the main screen
+    :rtype:
+    '''
 
 
     form = SetupForm()

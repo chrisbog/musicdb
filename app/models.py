@@ -9,6 +9,7 @@ class Artist(db.Model):
         return '<Artist id={}, name={}>'.format(self.id,self.artist_name)
 
 class Recording(db.Model):
+
     id = db.Column(db.Integer, primary_key=True)
     record_name = db.Column(db.String(80), index=True, unique=False)
     label = db.Column(db.String(20))
