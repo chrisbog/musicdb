@@ -1,4 +1,5 @@
 import os
+import logging
 
 class Config(object):
     basedir = os.path.abspath(os.path.dirname(__file__))
@@ -7,3 +8,5 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     DEBUGAPP=True
+
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)-15s-%(funcName)-15s %(levelname)-8s %(message)s')

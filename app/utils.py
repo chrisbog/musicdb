@@ -1,4 +1,5 @@
 import time
+import logging
 
 def generate_uniqueID():
 
@@ -8,5 +9,7 @@ def generate_uniqueID():
     :return: unique value
     :rtype: integer
     '''
-
-    return time.strftime("%Y%j%H%M") + str(time.process_time_ns() // 1000)
+    logging.debug("Entering generate_uniqueID")
+    value = time.strftime("%Y%j%H%M") + str(time.process_time_ns() // 1000)
+    logging.debug(f"Unique ID='{value}'")
+    return value

@@ -6,6 +6,7 @@ from app.forms import MusicSearchForm,AlbumForm,ArtistForm,SetupForm
 from sqlalchemy.exc import SQLAlchemyError
 from app.utils import generate_uniqueID
 import time
+import logging
 
 #Global Data to Persist Between Function Calls
 global_album_storage=[]
@@ -21,9 +22,11 @@ def main():
     :returns: index.html HTML Template which represents the home page
     :raises none
     """
+
+    logging.debug(f"Entering main")
+
     search = MusicSearchForm(request.form)
     if request.method == 'POST':
-        print (search)
         return search_results(search)
 
     artistcount = db.session.query(Artist).count()
@@ -43,28 +46,29 @@ def search_results(search):
     :returns: show-recordings.html HTML Template which represents the search results home page
     :raises none
     """
+    logging.debug(f"Entering search_results")
     results = []
-    print(search.select)
+    logging.debug(search.select)
     search_string = search.data['search']
 
-    print (search_string)
+    logging.debug(search_string)
 
     if search_string:
         if search.data['select'] == 'Artist':
-            print ("Doing a search on Artist=",search_string)
+            logging.info(f"Doing a search on Artist='{search_string}'")
 
             qry = db.session.query(Recording,Artist).filter(Recording.artist_id==Artist.id).\
                                     filter(Artist.artist_name.contains(search_string))
             results=qry.all()
 
-            print (results)
+
         elif search.data['select'] == 'Album':
-            print ("Doing a search on Album=",search_string)
+            logging.info(f"Doing a search on Album='{search_string}'")
             qry = db.session.query(Recording,Artist).filter(Recording.artist_id==Artist.id).\
                 filter(Recording.record_name.contains(search_string))
             results = qry.all()
 
-            print(results)
+        logging.info(f"Search Results={results}")
 
 
     else:
@@ -72,14 +76,14 @@ def search_results(search):
         results = qry.all()
 
     if not results:
-        print ("No Results Found")
+        logging.info(f"No Results Found")
         flash('No results found!',category="warning")
         return redirect('/')
     else:
         # display results
 
         for _row in results:
-            print(_row.Recording.record_name,_row.Artist.artist_name)
+            logging.debug(f"{_row.Recording.record_name} {_row.Artist.artist_name}")
         return render_template('show-recordings.html', recordings=results)
 
 
@@ -92,6 +96,7 @@ def show_artist():
     :returns: show-artists HTML Template to display the songs
     :raises none
     """
+    logging.debug(f"Entering show-artist")
     return render_template('show-artists.html', artists = Artist.query.all() )
 
 @app.route('/show-recording')
@@ -103,7 +108,7 @@ def show_recording():
     :returns: show-recording HTML Template to display the songs
     :raises none
     """
-
+    logging.debug(f"Entering show-recording")
     qry = db.session.query(Recording,Artist).filter(Recording.artist_id==Artist.id)
     results=qry.all()
     return render_template('show-recordings.html', recordings = results )
@@ -117,7 +122,7 @@ def show_song():
     :returns: show-song HTML Template to display the songs
     :raises none
     """
-
+    logging.debug(f"Entering show-song")
     return render_template('show-songs.html', songs = Song.query.all() )
 
 @app.route('/new_artist', methods=['GET', 'POST'])
@@ -129,6 +134,7 @@ def new_artist():
     :returns: new_album HTML Template to add the new userl
     :raises none
     """
+    logging.debug(f"Entering new_artist")
     form = ArtistForm(request.form)
 
     if request.method == 'POST' and form.validate():
@@ -136,10 +142,10 @@ def new_artist():
         exists = Artist.query.filter(Artist.artist_name == form.artist_name.data).first()
 
         if exists:
+            logging.info(f"{form.artist_name.data} already exists in the database!")
             message = form.artist_name.data+" already exists in the database!"
             category="danger"
         else:
-
 
             new_artist = Artist()
             new_artist.artist_name = form.artist_name.data
@@ -172,6 +178,7 @@ def save_form(form,artistid,new=False):
     :returns: Boolean value if the insertion was successful
     :raises none
     """
+    logging.debug(f"Entering save_form")
     recording = Recording()
 
     ts = int(time.time())
@@ -196,9 +203,6 @@ def save_form(form,artistid,new=False):
     recording.count_copy_cd = int(form.count_copy_cd.raw_data[0])
     recording.count_digital = int(form.count_digital.raw_data[0])
 
-
-
-
     try:
         db.session.add(recording)
 
@@ -208,7 +212,7 @@ def save_form(form,artistid,new=False):
             temp.record_id = recording.id
             temp.song_name = i
             temp.id = generate_uniqueID()
-            print(temp)
+            logging.debug(f"{temp}")
             db.session.add(temp)
 
         db.session.commit()
@@ -236,11 +240,12 @@ def newrecording(artistid):
     :returns: new_album HTML Template to add the new user
     :raises none
     """
+    logging.debug(f"Entering new_recording")
     qry = db.session.query(Artist).filter(Artist.id == artistid)
     results = qry.first()
     if results:
 
-        print("Adding a new recording for ArtistID: "+artistid+", "+str(results.artist_name))
+        logging.info(f"Adding a new recording for ArtistID: {artistid}, {results.artist_name}")
 
         form = AlbumForm(request.form)
         form.artist_id.data = artistid
@@ -248,7 +253,7 @@ def newrecording(artistid):
 
 
         if request.method == 'POST' and form.validate():
-            print ("Saving New Record")
+            logging.info (f"Saving New Record")
             save_form(form,artistid,True)
             return redirect ('/')
 
@@ -271,6 +276,8 @@ def newrecording(artistid):
 
 def update_records(album, form):
 
+
+    logging.debug(f"Entering update_records")
 
     album.record_name = form.album_name.data
     album.label_number = form.label_number.data
@@ -300,30 +307,27 @@ def update_records(album, form):
 
 
     if (songs_edited == song_results):
-        print("No Changes with Songs")
+        logging.debug(f"No Changes with Songs")
     else:
-        print("Changes occured with Songs")
+        logging.debug(f"Changes occured with Songs")
 
         songs_in_orig_not_new = set(song_existing) - set(songs_edited)
         songs_in_new_not_orig = set(songs_edited) - set(song_existing)
 
         if len(songs_in_new_not_orig) > 0:
-            print("We need to add the following: "+str(songs_in_new_not_orig))
+            logging.debug(f"We need to add the following: {songs_in_new_not_orig}")
             for i in songs_in_new_not_orig:
                 temp = Song()
                 temp.record_id = album.id
                 temp.song_name = i
                 temp.id = generate_uniqueID()
-                print(temp)
                 db.session.add(temp)
 
         if len(songs_in_orig_not_new) > 0:
-            print("We need to delete the following: "+str(songs_in_orig_not_new))
+            logging.debug(f"We need to delete the following: {songs_in_orig_not_new}")
             for i in songs_in_orig_not_new:
-                print(i)
                 song_query = db.session.query(Song).filter(Song.record_id == album.id).filter(Song.song_name == i)
                 song_results = song_query.delete()
-                print(song_results)
 
 
 
@@ -348,10 +352,11 @@ def viewrecordingdetails(recordid):
     :returns: album_details HTML Template to add the new user
     :raises none
     """
+    logging.debug(f"Entering viewrecordingdetails")
 
     if request.method == 'POST':
-        print("Attempting to Save Changes")
-        print (global_album_storage)
+        logging.debug(f"Attempting to Save Changes")
+        logging.debug(f"{global_album_storage}")
 
         qry = db.session.query(Recording).filter(Recording.id == recordid)
         results = qry.first()
@@ -420,7 +425,7 @@ def setup():
     :return: the config.html form or if it was a post, then a redirect back to the main screen
     :rtype:
     '''
-
+    logging.debug(f"Entering setup")
 
     form = SetupForm()
 
