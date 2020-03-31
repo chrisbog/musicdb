@@ -68,6 +68,14 @@ def search_results(search):
                 filter(Recording.record_name.contains(search_string))
             results = qry.all()
 
+        elif search.data['select'] == 'Song':
+            logging.info(f"Doing a search on Song='{search_string}'")
+
+            song_query = db.session.query(Song,Recording,Artist).filter(Recording.id==Song.record_id).\
+                filter(Artist.id==Recording.artist_id).\
+                filter(Song.song_name.contains(search_string))
+            results = song_query.all()
+
         logging.info(f"Search Results={results}")
 
 
