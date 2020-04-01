@@ -73,7 +73,7 @@ def search_results(search):
 
             song_query = db.session.query(Song,Recording,Artist).filter(Recording.id==Song.record_id).\
                 filter(Artist.id==Recording.artist_id).\
-                filter(Song.song_name.contains(search_string))
+                filter(Song.song_name.contains(search_string)).group_by(Recording.id)
             results = song_query.all()
 
         logging.info(f"Search Results={results}")
