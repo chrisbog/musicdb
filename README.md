@@ -23,3 +23,12 @@ We are using the Flask-Migrate library to help us migrate the database when chan
 
 ```$ flask db upgrade```
 
+Also when changes occur to the database structure, you can create the migration tables:
+
+``` flask db migrate - m "comment"```
+
+This function will create the migration scripts.   Then once the migration scripts are create, you can run:
+
+```$ flask db upgrade```
+
+
