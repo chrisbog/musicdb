@@ -37,4 +37,11 @@ class Song(db.Model):
     record_id = db.Column(db.Integer, db.ForeignKey('recording.id'))
 
     def __repr__(self):
-        return '<Song ID {},Record ID: {}, Song Name: {}>'.format(self.id,self.record_id, self.song_name)
+        return '<Song ID {}, Record ID: {}, Song Name: {}>'.format(self.id,self.record_id, self.song_name)
+
+class Configuration(db.Model):
+    key = db.Column(db.String(20),primary_key=True)
+    value = db.Column(db.String(50))
+
+    def __repr__(self):
+        return '<Key {}, Value {}'.format(self.key, self.value)
