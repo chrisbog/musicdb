@@ -18,15 +18,13 @@ migrate = Migrate(app,db)
 
 from app.utils import load_config_option
 
+# Load the Configuraiton Option from the DataBase
 value = load_config_option("LOGGING")
-print (f"{value}")
 
-if value == "DEBUG":
-    print("Setting Value to DEBUG")
-    logging.basicConfig(level=logging.DEBUG,format='%(asctime)-15s-%(funcName)-15s %(levelname)-8s %(message)s')
+if value == 'DEBUG':
+    logging.getLogger().setLevel(logging.DEBUG)
 else:
-    print("setting Value to INFO")
-    logging.basicConfig(level=logging.INFO,format='%(asctime)-15s-%(funcName)-15s %(levelname)-8s %(message)s')
+    logging.getLogger().setLevel(logging.INFO)
 
 
 from app import routes

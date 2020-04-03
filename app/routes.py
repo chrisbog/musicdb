@@ -440,13 +440,20 @@ def setup():
     if request.method == 'POST' and form.validate():
 
         if request.form.get('debugmode') == 'y':
-            app.config['DEBUGAPP'] = True
+            logging.info(f"Changing Logging Level to DEBUG")
+            logging.getLogger().setLevel(logging.DEBUG)
+
         else:
-            app.config['DEBUGAPP'] = False
+            logging.info(f"Changing Logging Level to INFO")
+            logging.getLogger().setLevel(logging.INFO)
 
         return redirect('/')
 
     else:
-        form.debugmode.data = app.config.get('DEBUGAPP')
+        if logging.root.level == logging.INFO:
+            form.debugmode.data = False
+        else:
+            form.debugmode.data = True
+        #form.debugmode.data = app.config.get('DEBUGAPP')
 
     return render_template('config.html',form=form)
