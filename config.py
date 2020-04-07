@@ -9,3 +9,6 @@ class Config(object):
 
     logging.basicConfig(level=logging.INFO,format='%(asctime)-15s-%(funcName)-15s %(levelname)-8s %(message)s')
 
+#from app.models import Configuration
+
+

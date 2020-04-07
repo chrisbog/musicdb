@@ -1,10 +1,7 @@
 import time
 import logging
 
-from app import db
 
-
-from app.models import Configuration
 
 def generate_uniqueID():
 
@@ -19,10 +16,4 @@ def generate_uniqueID():
     logging.debug(f"Unique ID='{value}'")
     return value
 
-def load_config_option(option):
-    logging.debug("Entering load_config_option")
 
-    qry = db.session.query(Configuration).filter(Configuration.key==option)
-    results = qry.all()
-    print (f"{results}")
-    return results[0].value

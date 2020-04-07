@@ -5,6 +5,7 @@ from app.models import Artist,Recording,Song
 from app.forms import MusicSearchForm,AlbumForm,ArtistForm,SetupForm
 from sqlalchemy.exc import SQLAlchemyError
 from app.utils import generate_uniqueID
+from app import musicdb_config
 import time
 import logging
 
@@ -442,10 +443,12 @@ def setup():
         if request.form.get('debugmode') == 'y':
             logging.info(f"Changing Logging Level to DEBUG")
             logging.getLogger().setLevel(logging.DEBUG)
+            musicdb_config.setitem("LOGGING","DEBUG")
 
         else:
             logging.info(f"Changing Logging Level to INFO")
             logging.getLogger().setLevel(logging.INFO)
+            musicdb_config.setitem("LOGGING", "INFO")
 
         return redirect('/')
 
@@ -454,6 +457,5 @@ def setup():
             form.debugmode.data = False
         else:
             form.debugmode.data = True
-        #form.debugmode.data = app.config.get('DEBUGAPP')
 
     return render_template('config.html',form=form)

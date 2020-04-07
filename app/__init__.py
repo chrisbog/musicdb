@@ -16,12 +16,13 @@ db = SQLAlchemy(app)
 
 migrate = Migrate(app,db)
 
-from app.utils import load_config_option
+from app.appconfig import AppConfig
 
-# Load the Configuraiton Option from the DataBase
-value = load_config_option("LOGGING")
 
-if value == 'DEBUG':
+# Create a global application configuration object
+musicdb_config = AppConfig()
+
+if musicdb_config.getitem("LOGGING") == 'DEBUG':
     logging.getLogger().setLevel(logging.DEBUG)
 else:
     logging.getLogger().setLevel(logging.INFO)
