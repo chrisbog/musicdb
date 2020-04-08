@@ -44,7 +44,7 @@
                    <td>{% if name.Recording.count_cd != 0 %} {{ name.Recording.count_cd }} {% endif %}</td>
                    <td>{% if name.Recording.count_digital != 0 %} {{ name.Recording.count_digital }}{% endif %} </td>
                    <td>{% if name.Recording.count_copy_cassette != 0 %} {{ name.Recording.count_copy_cassette }} {% endif %}</td>
-                   <td>{% if name.Recording.count_cd != 0 %} {{ name.Recording.count_cd }} {% endif %}</td>
+                   <td>{% if name.Recording.count_copy_cd != 0 %} {{ name.Recording.count_copy_cd }} {% endif %}</td>
                     <td><a href="{{ url_for('viewrecordingdetails',recordid=name.Recording.id) }} "><button type="button" class="btn btn-primary btn-sm">View Details...</button></a></td>
 
                </tr>

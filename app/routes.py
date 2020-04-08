@@ -1,20 +1,21 @@
 from flask import render_template, request, flash, redirect
 from musicdb import app
 from app import db
-from app.models import Artist,Recording,Song
-from app.forms import MusicSearchForm,AlbumForm,ArtistForm,SetupForm
+from app.models import Artist, Recording, Song
+from app.forms import MusicSearchForm, AlbumForm, ArtistForm, SetupForm
+import wtforms
 from sqlalchemy.exc import SQLAlchemyError
 from app.utils import generate_uniqueID
 from app import musicdb_config
 import time
 import logging
 
-#Global Data to Persist Between Function Calls
-global_album_storage=[]
+# Global Data to Persist Between Function Calls
+global_album_storage = []
 
 
-@app.route('/',methods=['GET', 'POST'])
-@app.route('/index',methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def main():
     """
     This function will create the HTML page to render the home page
@@ -58,22 +59,22 @@ def search_results(search):
         if search.data['select'] == 'Artist':
             logging.info(f"Doing a search on Artist='{search_string}'")
 
-            qry = db.session.query(Recording,Artist).filter(Recording.artist_id==Artist.id).\
-                                    filter(Artist.artist_name.contains(search_string))
-            results=qry.all()
+            qry = db.session.query(Recording, Artist).filter(Recording.artist_id == Artist.id). \
+                filter(Artist.artist_name.contains(search_string))
+            results = qry.all()
 
 
         elif search.data['select'] == 'Album':
             logging.info(f"Doing a search on Album='{search_string}'")
-            qry = db.session.query(Recording,Artist).filter(Recording.artist_id==Artist.id).\
+            qry = db.session.query(Recording, Artist).filter(Recording.artist_id == Artist.id). \
                 filter(Recording.record_name.contains(search_string))
             results = qry.all()
 
         elif search.data['select'] == 'Song':
             logging.info(f"Doing a search on Song='{search_string}'")
 
-            song_query = db.session.query(Song,Recording,Artist).filter(Recording.id==Song.record_id).\
-                filter(Artist.id==Recording.artist_id).\
+            song_query = db.session.query(Song, Recording, Artist).filter(Recording.id == Song.record_id). \
+                filter(Artist.id == Recording.artist_id). \
                 filter(Song.song_name.contains(search_string)).group_by(Recording.id)
             results = song_query.all()
 
@@ -81,12 +82,12 @@ def search_results(search):
 
 
     else:
-        qry = db.session.query(Recording,Artist).filter(Recording.artist_id==Artist.id)
+        qry = db.session.query(Recording, Artist).filter(Recording.artist_id == Artist.id)
         results = qry.all()
 
     if not results:
         logging.info(f"No Results Found")
-        flash('No results found!',category="warning")
+        flash('No results found!', category="warning")
         return redirect('/')
     else:
         # display results
@@ -106,7 +107,8 @@ def show_artist():
     :raises none
     """
     logging.debug(f"Entering show-artist")
-    return render_template('show-artists.html', artists = Artist.query.all() )
+    return render_template('show-artists.html', artists=Artist.query.all())
+
 
 @app.route('/show-recording')
 def show_recording():
@@ -118,9 +120,10 @@ def show_recording():
     :raises none
     """
     logging.debug(f"Entering show-recording")
-    qry = db.session.query(Recording,Artist).filter(Recording.artist_id==Artist.id)
-    results=qry.all()
-    return render_template('show-recordings.html', recordings = results )
+    qry = db.session.query(Recording, Artist).filter(Recording.artist_id == Artist.id)
+    results = qry.all()
+    return render_template('show-recordings.html', recordings=results)
+
 
 @app.route('/show-song')
 def show_song():
@@ -132,7 +135,8 @@ def show_song():
     :raises none
     """
     logging.debug(f"Entering show-song")
-    return render_template('show-songs.html', songs = Song.query.all() )
+    return render_template('show-songs.html', songs=Song.query.all())
+
 
 @app.route('/new_artist', methods=['GET', 'POST'])
 def new_artist():
@@ -152,8 +156,8 @@ def new_artist():
 
         if exists:
             logging.info(f"{form.artist_name.data} already exists in the database!")
-            message = form.artist_name.data+" already exists in the database!"
-            category="danger"
+            message = form.artist_name.data + " already exists in the database!"
+            category = "danger"
         else:
 
             new_artist = Artist()
@@ -166,10 +170,10 @@ def new_artist():
                 db.session.commit()
             except SQLAlchemyError as e:
                 db.session.rollback()
-                message = "ERROR: "+ str(e.__dict__['orig'])
-                category="danger"
+                message = "ERROR: " + str(e.__dict__['orig'])
+                category = "danger"
             else:
-                message = "Successfully Added Artist: " + new_artist.artist_name + ", with ID: "+str(new_artist.id)
+                message = "Successfully Added Artist: " + new_artist.artist_name + ", with ID: " + str(new_artist.id)
                 category = "success"
 
         flash(message, category=category)
@@ -178,10 +182,15 @@ def new_artist():
 
     return render_template('new_artist.html', form=form)
 
-def save_form(form,artistid,new=False):
+
+def save_form(form, artistid, new=False):
     """
     This function will save the data when adding a new recording
 
+    :return:
+    :rtype:
+    :param new:
+    :type new:
     :param form: The form object that we defined
     :param artistid: The artist id that we want to add a recording it
     :returns: Boolean value if the insertion was successful
@@ -237,7 +246,7 @@ def save_form(form,artistid,new=False):
 
     flash(message, category=category)
 
-    return(rc)
+    return rc
 
 
 @app.route("/new_recording/<artistid>", methods=('GET', 'POST'))
@@ -260,11 +269,10 @@ def newrecording(artistid):
         form.artist_id.data = artistid
         form.artist_name.data = results.artist_name
 
-
         if request.method == 'POST' and form.validate():
-            logging.info (f"Saving New Record")
-            save_form(form,artistid,True)
-            return redirect ('/')
+            logging.info(f"Saving New Record")
+            save_form(form, artistid, True)
+            return redirect('/')
 
         else:
             form.count_lp.data = 0
@@ -281,11 +289,10 @@ def newrecording(artistid):
         message = "Unable to add recording to Artist ID " + artistid + ". Artist doesn't exist, please add a new artist!"
         category = "danger"
         flash(message, category=category)
-        return redirect ('/')
+        return redirect('/')
+
 
 def update_records(album, form):
-
-
     logging.debug(f"Entering update_records")
 
     album.record_name = form.album_name.data
@@ -295,14 +302,16 @@ def update_records(album, form):
     album.cover = form.cover.data
     album.word = form.word.data
 
-    album.count_lp = int(form.count_lp.raw_data[0])
-    album.count_45 = int(form.count_45.raw_data[0])
-    album.count_78 = int(form.count_78.raw_data[0])
-    album.count_cassette = int(form.count_cassette.raw_data[0])
-    album.count_copy_cassette = int(form.count_copy_cassette.raw_data[0])
-    album.count_cd = int(form.count_cd.raw_data[0])
-    album.count_copy_cd = int(form.count_copy_cd.raw_data[0])
-    album.count_digital = int(form.count_digital.raw_data[0])
+    compare = lambda x : int(x) if x.isdigit() else 0
+
+    album.count_lp = compare(form.count_lp.raw_data[0])
+    album.count_45 = compare(form.count_45.raw_data[0])
+    album.count_78 = compare(form.count_78.raw_data[0])
+    album.count_cassette = compare(form.count_cassette.raw_data[0])
+    album.count_copy_cassette = compare(form.count_copy_cassette.raw_data[0])
+    album.count_cd = compare(form.count_cd.raw_data[0])
+    album.count_copy_cd = compare(form.count_copy_cd.raw_data[0])
+    album.count_digital = compare(form.count_digital.raw_data[0])
 
     songs_edited = form.songs.data.splitlines()
 
@@ -312,8 +321,6 @@ def update_records(album, form):
     song_existing = []
     for i in song_results:
         song_existing.append(i.song_name)
-
-
 
     if (songs_edited == song_results):
         logging.debug(f"No Changes with Songs")
@@ -337,9 +344,6 @@ def update_records(album, form):
             for i in songs_in_orig_not_new:
                 song_query = db.session.query(Song).filter(Song.record_id == album.id).filter(Song.song_name == i)
                 song_results = song_query.delete()
-
-
-
 
     try:
         db.session.commit()
@@ -367,12 +371,14 @@ def viewrecordingdetails(recordid):
         logging.debug(f"Attempting to Save Changes")
         logging.debug(f"{global_album_storage}")
 
+
         qry = db.session.query(Recording).filter(Recording.id == recordid)
         results = qry.first()
 
-        form=AlbumForm(formdata=request.form,obj=results)
+        form = AlbumForm(formdata=request.form, obj=results)
 
-        success = update_records(results,form)
+
+        success = update_records(results, form)
         if not success:
             message = "ERROR: " + str(e.__dict__['orig'])
             category = "danger"
@@ -381,7 +387,7 @@ def viewrecordingdetails(recordid):
             category = "success"
 
         flash(message, category=category)
-        return redirect ('/')
+        return redirect('/')
     else:
 
         qry = db.session.query(Recording).filter(Recording.id == recordid)
@@ -389,7 +395,9 @@ def viewrecordingdetails(recordid):
 
         form = AlbumForm()
 
-        #Save the form
+        # Save the form
+
+
 
         form.album_name.data = results.record_name
         form.label_number.data = results.label_number
@@ -405,35 +413,35 @@ def viewrecordingdetails(recordid):
         form.count_copy_cd.data = results.count_copy_cd
         form.count_digital.data = results.count_digital
 
-        global_album_storage.append((form))
+        global_album_storage.append(form)
 
         qry = db.session.query(Artist).filter(Artist.id == results.artist_id)
         results = qry.first()
 
-        song_query = db.session.query(Song).filter( Song.record_id == recordid)
+        song_query = db.session.query(Song).filter(Song.record_id == recordid)
         song_results = song_query.all()
 
-        tracks_display=""
-        tracks=[]
+        tracks_display = ""
+        tracks = []
         for song in song_results:
-            tracks_display += song.song_name+"\n"
+            tracks_display += song.song_name + "\n"
             tracks.append(song.song_name)
 
         form.songs.data = tracks_display
         global_album_storage.append(tracks)
         return render_template('album-details.html', form=form, artistname=results.artist_name)
 
-    return redirect ('/')
+    return redirect('/')
 
 
 @app.route("/setup", methods=('GET', 'POST'))
 def setup():
-    '''
+    """
     This function will display the setup page used for configuring the application.
 
     :return: the config.html form or if it was a post, then a redirect back to the main screen
     :rtype:
-    '''
+    """
     logging.debug(f"Entering setup")
 
     form = SetupForm()
@@ -443,7 +451,7 @@ def setup():
         if request.form.get('debugmode') == 'y':
             logging.info(f"Changing Logging Level to DEBUG")
             logging.getLogger().setLevel(logging.DEBUG)
-            musicdb_config.setitem("LOGGING","DEBUG")
+            musicdb_config.setitem("LOGGING", "DEBUG")
 
         else:
             logging.info(f"Changing Logging Level to INFO")
@@ -458,4 +466,24 @@ def setup():
         else:
             form.debugmode.data = True
 
-    return render_template('config.html',form=form)
+    return render_template('config.html', form=form)
+
+
+@app.route("/integritycheck", methods=(['GET']))
+def integritycheck():
+
+
+# Query to determine if Artist exists without an album:
+# select count(artist.artist_name) from artist left join recording ON recording.artist_id = artist.id where recording.artist_id IS NULL
+
+#Query to determine which Songs exist without an album:
+#select count(song.song_name) from song left join recording ON recording.id = song.id where recording.id IS NULL
+
+
+
+    qry = db.session.query(Recording.record_name).outerjoin(Artist).filter()
+    number = qry.count()
+
+    print (f"{number}")
+
+    return redirect('/')
