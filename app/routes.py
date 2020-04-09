@@ -5,7 +5,7 @@ from app.models import Artist, Recording, Song
 from app.forms import MusicSearchForm, AlbumForm, ArtistForm, SetupForm
 import wtforms
 from sqlalchemy.exc import SQLAlchemyError
-from app.utils import generate_uniqueID
+from app.utils import generate_uniqueID,cleanup_songs
 from app import musicdb_config
 import time
 import logging
@@ -236,18 +236,15 @@ def save_form(form, artistid, new=False):
         db.session.add(recording)
 
         # Split the song names
-        songs = form.songs.data.splitlines()
+        songs = cleanup_songs(form.songs.data.splitlines())
         for i in songs:
-
-            # Ignore, any blank song names
-            if not i.isspace() and i is not "":
-                # Create a temporary song object to hold the album ID
-                temp = Song()
-                temp.record_id = recording.id
-                temp.song_name = i
-                temp.id = generate_uniqueID()
-                logging.debug(f"{temp}")
-                db.session.add(temp)
+            # Create a temporary song object to hold the album ID
+            temp = Song()
+            temp.record_id = recording.id
+            temp.song_name = i
+            temp.id = generate_uniqueID()
+            logging.debug(f"{temp}")
+            db.session.add(temp)
 
         db.session.commit()
     except SQLAlchemyError as e:
@@ -329,7 +326,30 @@ def update_records(album, form):
     album.count_copy_cd = compare(form.count_copy_cd.raw_data[0])
     album.count_digital = compare(form.count_digital.raw_data[0])
 
-    songs_edited = form.songs.data.splitlines()
+    songs_edited = cleanup_songs(form.songs.data.splitlines())
+
+#    print (songs_edited)
+#    #TODO: REMOVE ANY OF THE BLANK LINES
+#    blanks=[]
+#    count=0
+#    for i in songs_edited:
+#        if i.isspace() or i is "":
+#            blanks.append(i)
+#        count += 1
+#
+#    print (blanks)
+
+#    for i in blanks:
+#        songs_edited.remove(i)
+#    print(songs_edited)
+
+#    final_songs=[]
+#    for i in songs_edited:
+#        final_songs.append(i.strip())
+
+#    print (final_songs)
+
+
 
     song_query = db.session.query(Song).filter(Song.record_id == album.id)
     song_results = song_query.all()
