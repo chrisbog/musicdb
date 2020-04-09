@@ -210,6 +210,17 @@ def save_form(form, artistid, new=False):
     recording.cover = form.cover.data
     recording.word = form.word.data
 
+    # Determine if the recording name is blank or spaces, then don't save
+    if recording.record_name.isspace() or recording.record_name is "":
+        logging.info(f"Unable to add record since name is not blank.")
+        message = "Unable to add recording since name is not blank."
+        category = "danger"
+        rc = False
+
+        flash(message, category=category)
+
+        return rc
+
     # Not Sure this is the best way to get data from the form, but it is the only option that would work
 
     recording.count_lp = int(form.count_lp.raw_data[0])
