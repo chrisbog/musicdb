@@ -156,7 +156,7 @@ def new_artist():
 
         if exists:
             logging.info(f"{form.artist_name.data} already exists in the database!")
-            message = form.artist_name.data + " already exists in the database!"
+            message = f"{form.artist_name.data} already exists in the database!"
             category = "danger"
         else:
 
@@ -224,14 +224,19 @@ def save_form(form, artistid, new=False):
     try:
         db.session.add(recording)
 
+        # Split the song names
         songs = form.songs.data.splitlines()
         for i in songs:
-            temp = Song()
-            temp.record_id = recording.id
-            temp.song_name = i
-            temp.id = generate_uniqueID()
-            logging.debug(f"{temp}")
-            db.session.add(temp)
+
+            # Ignore, any blank song names
+            if not i.isspace() and i is not "":
+                # Create a temporary song object to hold the album ID
+                temp = Song()
+                temp.record_id = recording.id
+                temp.song_name = i
+                temp.id = generate_uniqueID()
+                logging.debug(f"{temp}")
+                db.session.add(temp)
 
         db.session.commit()
     except SQLAlchemyError as e:
@@ -349,7 +354,7 @@ def update_records(album, form):
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
-        rc = False
+        return False, e
     else:
         rc = True
 
@@ -368,22 +373,27 @@ def viewrecordingdetails(recordid):
     logging.debug(f"Entering viewrecordingdetails")
 
     if request.method == 'POST':
+        # Let's check to see if the Cancel button was pressed, if so, cancel the update
+        if 'Cancel' in request.form :
+            logging.info(f"Cancelling the updating of a recording with id {recordid}")
+            message = "Canceled Updating Recording: "
+            category = "warning"
+            flash(message, category=category)
+            return redirect('/')
         logging.debug(f"Attempting to Save Changes")
-        logging.debug(f"{global_album_storage}")
-
 
         qry = db.session.query(Recording).filter(Recording.id == recordid)
         results = qry.first()
 
         form = AlbumForm(formdata=request.form, obj=results)
 
-
         success = update_records(results, form)
+
         if not success:
-            message = "ERROR: " + str(e.__dict__['orig'])
+            message = f"ERROR: Unable to update the recording {recordid}"
             category = "danger"
         else:
-            message = "Successfully Updated Recording: " + results.record_name
+            message = f"Successfully Updated Recording: {results.record_name}"
             category = "success"
 
         flash(message, category=category)
@@ -396,8 +406,6 @@ def viewrecordingdetails(recordid):
         form = AlbumForm()
 
         # Save the form
-
-
 
         form.album_name.data = results.record_name
         form.label_number.data = results.label_number
@@ -471,7 +479,11 @@ def setup():
 
 @app.route("/integritycheck", methods=(['GET']))
 def integritycheck():
-
+    """
+    This function does a very simple integrity check for the database.
+    :return: redirect back to the main screen
+    :rtype:
+    """
 
 # Query to determine if Artist exists without an album:
 # select count(artist.artist_name) from artist left join recording ON recording.artist_id = artist.id where recording.artist_id IS NULL

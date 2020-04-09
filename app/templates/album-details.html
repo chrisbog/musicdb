@@ -9,9 +9,11 @@
 <form method=post>
     <dl>
         <h4>Album Artist: {{ artistname}}</h4>
-        {{ render_field(form.album_name) }}
-        {{ render_field(form.label) }}
-        {{ render_field(form.label_number) }}
+
+        {{ render_field(form.album_name,size=70) }}
+        {{ render_field(form.label,size=70) }}
+        {{ render_field(form.label_number,size=70) }}
+
         <div class="container" style="border:1px solid #cecece" >
         <div class="row">
                   <div class="col-md-auto">
@@ -55,8 +57,8 @@
 </div>
       {{ render_field(form.songs, cols="80", rows="14") }}
     </dl>
-    <input type=submit value=Submit>
-</form>
+    <input type=submit name="Submit" value="Submit">
+    <input type=submit name="Cancel" value="Cancel">
 
 
 
