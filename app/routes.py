@@ -7,6 +7,7 @@ import wtforms
 from sqlalchemy.exc import SQLAlchemyError
 from app.utils import generate_uniqueID,cleanup_songs
 from app import musicdb_config
+from orderedset import OrderedSet
 import time
 import logging
 
@@ -363,8 +364,10 @@ def update_records(album, form):
     else:
         logging.debug(f"Changes occured with Songs")
 
-        songs_in_orig_not_new = set(song_existing) - set(songs_edited)
-        songs_in_new_not_orig = set(songs_edited) - set(song_existing)
+#        songs_in_orig_not_new = set(song_existing) - set(songs_edited)
+#        songs_in_new_not_orig = set(songs_edited) - set(song_existing)
+        songs_in_orig_not_new = OrderedSet(song_existing) - OrderedSet(songs_edited)
+        songs_in_new_not_orig = OrderedSet(songs_edited) - OrderedSet(song_existing)
 
         if len(songs_in_new_not_orig) > 0:
             logging.debug(f"We need to add the following: {songs_in_new_not_orig}")
