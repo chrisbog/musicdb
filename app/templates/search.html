@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+
+    {% for category, message in messages %}
+  <div class="alert alert-{{ category }}" role="alert">
+
+    <ul class=flashes>
+      {{ message }}
+      </div>
+    {% endfor %}
+    </ul>
+
+  {% endif %}
+{% endwith %}
+
+{% from "_formhelpers.html" import render_field %}
+<div class="container" style="border:1px solid #cecece" >
+  <h3>Search</h3>
+
+<form method=post>
+    <div class="row">
+      <div class="col-md-auto">
+        {{ render_field(form.select) }}
+      </div>
+      <div class="col-md-auto">
+        {{ render_field(form.search) }}
+      </div>
+      <div class="col-md-auto">
+
+      </div>
+    </div>
+  <input type=submit value=Search>
+  <p>
+
+  </p>
+</form>
+</div>
+<p></p>
+
+
+
+
+
+{% endblock %}

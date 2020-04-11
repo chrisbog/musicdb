@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<doctype html>
+<title>About -</title>
+<h2>About</h2>
+
+{% from "_formhelpers.html" import render_field %}
+
+
+
+
+  <div class="container" style="border:1px solid #cecece" >
+      <h5>Music Database</h5>
+
+    <p>Build Version = {{ version }}</p>
+
+
+  <p><a href="http://www.bogdonfamily.com">http://www.bogdonfamily.com</a></p>
+  <p><a href="mailto:chris@bogdonfamily.com">chris@bogdonfamily.com</a></p>
+  <p>™ and © Copyright 2020. Chris Bogdon.   All Rights Reserverd. </p>
+  </div>
+
+
+
+{% endblock %}
