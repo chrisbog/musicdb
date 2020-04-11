@@ -7,6 +7,7 @@ class Config(object):
         'sqlite:///'+os.path.join(basedir, 'musicdb.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+
     logging.basicConfig(level=logging.INFO,format='%(asctime)-15s-%(funcName)-15s %(levelname)-8s %(message)s')
 
 #from app.models import Configuration

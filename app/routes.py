@@ -2,11 +2,12 @@ from flask import render_template, request, flash, redirect
 from musicdb import app
 from app import db
 from app.models import Artist, Recording, Song
-from app.forms import MusicSearchForm, AlbumForm, ArtistForm, SetupForm, ArtistSearchForm
+from app.forms import MusicSearchForm, AlbumForm, ArtistForm, SetupForm, GenericSearchForm
 import wtforms
 from sqlalchemy.exc import SQLAlchemyError
 from app.utils import generate_uniqueID,cleanup_songs
 from app import musicdb_config
+from app import version
 from orderedset import OrderedSet
 import time
 import logging
@@ -39,6 +40,59 @@ def main():
     return render_template("index.html", form=search, recordcount=recordcount, artistcount=artistcount,
                            songcount=songcount)
 
+
+@app.route('/about')
+def about():
+    logging.debug(f"Entering about")
+    return render_template("about.html",version=version)
+
+@app.route('/search',methods=['GET', 'POST'])
+def search():
+
+    logging.debug(f"Entering search")
+
+    search = GenericSearchForm(request.form)
+
+    if request.method == 'POST':
+        logging.debug("POST was pressed")
+        return generic_search(search)
+
+    return render_template("search.html", form=search)
+
+
+@app.route('/generic_search')
+def generic_search(search):
+
+    logging.debug(f"Entering generic_search")
+    results = []
+    logging.debug(search.select)
+
+
+    if search.data['select'] == '45Recordings':
+        logging.info(f"Doing a search on 45 Recordings")
+
+        qry = db.session.query(Recording, Artist).filter(Recording.artist_id == Artist.id). \
+            filter(Recording.count_45 > 0)
+        results = qry.all()
+    elif search.data['select'] == '78Recordings':
+        logging.info(f"Doing a search on 78 Recordings")
+
+        qry = db.session.query(Recording, Artist).filter(Recording.artist_id == Artist.id). \
+            filter(Recording.count_78 > 0)
+        results = qry.all()
+
+    elif search.data['select'] == 'DuplicateLPs':
+        logging.info(f"Doing a search on Duplicate Lps")
+
+        qry = db.session.query(Recording, Artist).filter(Recording.artist_id == Artist.id). \
+            filter(Recording.count_lp > 1)
+        results = qry.all()
+
+
+    logging.info(f"Search Results={results}")
+
+
+    return render_template('show-recordings.html', recordings=results)
 
 @app.route('/results')
 def search_results(search):

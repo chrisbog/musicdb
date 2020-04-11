@@ -19,6 +19,9 @@ migrate = Migrate(app,db)
 from app.appconfig import AppConfig
 
 
+# Set the Version Number
+version = ".9b"
+
 # Create a global application configuration object
 musicdb_config = AppConfig()
 
