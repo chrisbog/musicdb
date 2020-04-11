@@ -1,10 +1,14 @@
 from wtforms import Form, StringField, SelectField, IntegerField, BooleanField, TextAreaField
 
 class MusicSearchForm(Form):
-    choices = [('Artist', 'Artist'),
-               ('Album', 'Album'),
-               ('Song', 'Song')]
+    choices = [('Artist', 'Recording by Artist'),
+               ('Album', 'Recording by Album' ),
+               ('Song', 'Recording by Song' ),
+               ('ArtistOnly', 'Artist')]
     select = SelectField('Select a search type:', choices=choices)
+    search = StringField('')
+
+class ArtistSearchForm(Form):
     search = StringField('')
 
 class AlbumForm(Form):

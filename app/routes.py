@@ -2,7 +2,7 @@ from flask import render_template, request, flash, redirect
 from musicdb import app
 from app import db
 from app.models import Artist, Recording, Song
-from app.forms import MusicSearchForm, AlbumForm, ArtistForm, SetupForm
+from app.forms import MusicSearchForm, AlbumForm, ArtistForm, SetupForm, ArtistSearchForm
 import wtforms
 from sqlalchemy.exc import SQLAlchemyError
 from app.utils import generate_uniqueID,cleanup_songs
@@ -78,6 +78,12 @@ def search_results(search):
                 filter(Artist.id == Recording.artist_id). \
                 filter(Song.song_name.contains(search_string)).group_by(Recording.id)
             results = song_query.all()
+        elif search.data['select'] == 'ArtistOnly':
+            logging.info(f"Doing an Artist Seach on Artist='{search_string}'")
+
+            artist_query = db.session.query(Artist).filter(Artist.artist_name.contains(search_string)). \
+                group_by(Artist.id)
+            results = artist_query.all()
 
         logging.info(f"Search Results={results}")
 
@@ -87,15 +93,21 @@ def search_results(search):
         results = qry.all()
 
     if not results:
-        logging.info(f"No Results Found")
-        flash('No results found!', category="warning")
+        logging.info(f"No Results Found for '{search_string}'")
+        flash(f'No results found for {search_string}', category="warning")
         return redirect('/')
     else:
         # display results
 
-        for _row in results:
-            logging.debug(f"{_row.Recording.record_name} {_row.Artist.artist_name}")
-        return render_template('show-recordings.html', recordings=results)
+        if search.data['select'] == 'ArtistOnly':
+            for _row in results:
+                logging.debug(f"{_row.artist_name}")
+            return render_template('show-artists.html', artists=results)
+
+        else:
+            for _row in results:
+                logging.debug(f"{_row.Recording.record_name} {_row.Artist.artist_name}")
+            return render_template('show-recordings.html', recordings=results)
 
 
 @app.route('/show-artist')
