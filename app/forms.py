@@ -11,7 +11,8 @@ class MusicSearchForm(Form):
 class GenericSearchForm(Form):
     choices = [("45Recordings", "Recordings in 45 Format"),
                ("78Recordings", "Recordings in 78 Format"),
-               ("DuplicateLPs", "Duplicate LPs")]
+               ("DuplicateLPs", "Duplicate LPs"),
+               ("RecordingsWithNoCopies" , "Recordings with 0 Copies")]
     select = SelectField('Select a search type:', choices=choices)
     search = StringField('')
 

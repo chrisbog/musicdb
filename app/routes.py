@@ -5,6 +5,7 @@ from app.models import Artist, Recording, Song
 from app.forms import MusicSearchForm, AlbumForm, ArtistForm, SetupForm, GenericSearchForm
 import wtforms
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import and_
 from app.utils import generate_uniqueID,cleanup_songs
 from app import musicdb_config
 from app import version
@@ -43,11 +44,24 @@ def main():
 
 @app.route('/about')
 def about():
+    """
+    This route point displays the about screen to print the version and copyright of the software.
+
+    :return: about.html template which represents the about screen.
+    :rtype:
+    """
     logging.debug(f"Entering about")
     return render_template("about.html",version=version)
 
 @app.route('/search',methods=['GET', 'POST'])
 def search():
+    """
+    This route point displays the generic search form to display the generic query screen.
+
+    :return: If the method was a GET, then we return the search.html form.   If the method was a post
+             then we return the output of the search results.
+    :rtype:
+    """
 
     logging.debug(f"Entering search")
 
@@ -60,9 +74,14 @@ def search():
     return render_template("search.html", form=search)
 
 
-@app.route('/generic_search')
 def generic_search(search):
+    """
 
+    :param search: This is the data representing the form Search
+    :type search: GenericSearchForm
+    :return: The show-recordings.html template with the appropriate day populated.
+    :rtype:
+    """
     logging.debug(f"Entering generic_search")
     results = []
     logging.debug(search.select)
@@ -88,6 +107,14 @@ def generic_search(search):
             filter(Recording.count_lp > 1)
         results = qry.all()
 
+    elif search.data['select'] == 'RecordingsWithNoCopies':
+        logging.info(f"Doing a search on Recording with 0 copies")
+
+        qry = db.session.query(Recording, Artist).filter(Recording.artist_id == Artist.id). \
+            filter(and_(Recording.count_lp == 0,Recording.count_45 == 0, Recording.count_78 == 0, \
+                   Recording.count_cd == 0, Recording.count_cassette == 0, Recording.count_copy_cassette == 0, \
+                   Recording.count_copy_cd == 0,Recording.count_digital == 0))
+        results = qry.all()
 
     logging.info(f"Search Results={results}")
 
