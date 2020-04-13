@@ -116,6 +116,13 @@ def generic_search(search):
                    Recording.count_copy_cd == 0,Recording.count_digital == 0))
         results = qry.all()
 
+    elif search.data['select'] == 'RecordingsNotDigital':
+        logging.info(f"Doing a search on Recordings without a digital copy")
+
+        qry = db.session.query(Recording, Artist).filter(Recording.artist_id == Artist.id). \
+            filter(Recording.count_digital == 0)
+        results = qry.all()
+
     logging.info(f"Search Results={results}")
 
 
