@@ -44,7 +44,7 @@ def cleanup_songs(songs):
 
     final_songs = []
     for i in songs:
-        final_songs.append(i.strip())
+        final_songs.append(i.strip().title())
 
     logging.debug(f"Song list after cleaned up:{final_songs}")
 

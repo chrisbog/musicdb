@@ -5,9 +5,6 @@ from config import Config
 import logging
 from logging.handlers import RotatingFileHandler
 
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine
-
 app= Flask(__name__)
 
 app.secret_key = 'musicdbSecretKey'    # You have to use to add a flashed object
@@ -34,7 +31,5 @@ if musicdb_config.getitem("LOGGING") == 'DEBUG':
     logging.getLogger().setLevel(logging.DEBUG)
 else:
     logging.getLogger().setLevel(logging.INFO)
-
-
 
 from app import routes, models, errors

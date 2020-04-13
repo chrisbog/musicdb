@@ -23,7 +23,7 @@ def main():
     """
     This function will create the HTML page to render the home page
 
-    :param none
+    :param
     :returns: index.html HTML Template which represents the home page
     :raises none
     """
