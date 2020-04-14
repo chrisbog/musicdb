@@ -269,18 +269,20 @@ def new_artist():
     logging.debug(f"Entering new_artist")
     form = ArtistForm(request.form)
 
+    artist_name_cleaned = form.artist_name.data.strip().title()
+
     if request.method == 'POST' and form.validate():
 
-        exists = Artist.query.filter(Artist.artist_name == form.artist_name.data).first()
+        exists = Artist.query.filter(Artist.artist_name == artist_name_cleaned).first()
 
         if exists:
-            logging.info(f"{form.artist_name.data} already exists in the database!")
-            message = f"{form.artist_name.data} already exists in the database!"
+            logging.info(f"{artist_name_cleaned} already exists in the database!")
+            message = f"{artist_name_cleaned} already exists in the database!"
             category = "danger"
         else:
 
             new_artist = Artist()
-            new_artist.artist_name = form.artist_name.data
+            new_artist.artist_name = artist_name_cleaned
             ts = int(time.time())
             new_artist.id = ts
 
@@ -322,10 +324,10 @@ def save_form(form, artistid, new=False):
     recording.id = ts
 
     recording.artist_id = artistid
-    recording.record_name = form.album_name.data
-    recording.label_number = form.label_number.data
-    recording.label = form.label.data
-    recording.type = form.label.data
+    recording.record_name = form.album_name.data.strip().title()
+    recording.label_number = form.label_number.data.strip().title()
+    recording.label = form.label.data.strip()
+    recording.type = form.label.data.strip().title()
     recording.cover = form.cover.data
     recording.word = form.word.data
 
@@ -427,9 +429,9 @@ def newrecording(artistid):
 def update_records(album, form):
     logging.debug(f"Entering update_records")
 
-    album.record_name = form.album_name.data
-    album.label_number = form.label_number.data
-    album.label = form.label.data
+    album.record_name = form.album_name.data.strip().title()
+    album.label_number = form.label_number.data.strip().title()
+    album.label = form.label.data.strip()
     album.type = form.label.data
     album.cover = form.cover.data
     album.word = form.word.data

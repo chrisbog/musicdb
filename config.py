@@ -11,4 +11,4 @@ class Config(object):
 
 #from app.models import Configuration
 
-
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)-15s-%(funcName)-15s %(levelname)-8s %(message)s')
