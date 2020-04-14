@@ -7,14 +7,32 @@ import wtforms
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import and_
 from app.utils import generate_uniqueID,cleanup_songs
-from app import musicdb_config
-from app import version
+#from app import musicdb_config
+#from app import version
 from orderedset import OrderedSet
 import time
 import logging
+from app.appconfig import AppConfig
+from logging.handlers import RotatingFileHandler
 
 # Global Data to Persist Between Function Calls
 global_album_storage = []
+# Create a global application configuration object
+musicdb_config = AppConfig()
+# Set the Version Number
+version = ".9b"
+
+@app.before_first_request
+def appinit():
+
+    logging.getLogger()
+    handler = RotatingFileHandler("musicdb.log", maxBytes=1000000, backupCount=5)
+    logging.basicConfig(level=logging.INFO, format='%(asctime)-15s-%(funcName)-15s %(levelname)-8s %(message)s', \
+                        handlers=[handler, logging.StreamHandler()])
+    if musicdb_config.getitem("LOGGING") == 'DEBUG':
+        logging.getLogger().setLevel(logging.DEBUG)
+    else:
+        logging.getLogger().setLevel(logging.INFO)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -167,7 +185,7 @@ def search_results(search):
                 filter(Song.song_name.contains(search_string)).group_by(Recording.id)
             results = song_query.all()
         elif search.data['select'] == 'ArtistOnly':
-            logging.info(f"Doing an Artist Seach on Artist='{search_string}'")
+            logging.info(f"Doing an Artist Search on Artist='{search_string}'")
 
             artist_query = db.session.query(Artist).filter(Artist.artist_name.contains(search_string)). \
                 group_by(Artist.id)

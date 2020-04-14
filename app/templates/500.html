@@ -4,5 +4,8 @@
 
     <h3>An unexpected error has occurred</h3>
     <p>The administrator has been notified. Sorry for the inconvenience!</p>
+    {% for line in display %}
+        <p><code>{{ line }}</code></p>
+    {% endfor %}
 
 {% endblock %}

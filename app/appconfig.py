@@ -22,9 +22,8 @@ class AppConfig:
         results = qry.all()
         if results:
             if results[0].value == value:
-                print("The value did not change")
+                pass
             else:
-                print("The value did change")
                 results[0].value = value
                 db.session.commit()
 
