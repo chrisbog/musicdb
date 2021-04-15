@@ -1,5 +1,6 @@
 import time
 import logging
+import re
 
 
 def generate_uniqueID():
@@ -42,8 +43,14 @@ def cleanup_songs(songs):
     for i in blanks:
         songs.remove(i)
 
-    final_songs = []
+    # Now let's remove the File types and Track Numbers in the File Names if it is there.   This is useful, if you
+    # copy and paste from the directory.
+    cleanedup = []
     for i in songs:
+        cleanedup.append(re.sub('^\d+-|^\d+ |.mp3|.m4a','',i))
+
+    final_songs = []
+    for i in cleanedup:
         final_songs.append(i.strip().title())
 
     logging.debug(f"Song list after cleaned up:{final_songs}")
